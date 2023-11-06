@@ -13,3 +13,5 @@ PATH_TO_RAW_TEST_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "raw_test_musdb18.npz")
 
 # Audio
 SAMPLE_RATE = 44100
+N_SAMPLES_IN = 147443
+N_SAMPLES_OUT = 16389
