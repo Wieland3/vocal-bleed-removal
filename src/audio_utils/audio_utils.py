@@ -49,3 +49,16 @@ def zero_pad(array):
         raise ValueError("Input array must be either mono or stereo.")
 
     return padded_array
+
+
+def center_crop(array, num_samples=constants.N_SAMPLES_OUT):
+    """
+    Center crops an audio array.
+    :param array: Array to operate on
+    :param num_samples: length of the cropped audio
+    :return: numpy array with cropped audio
+    """
+    start = (array.shape[0] - num_samples) // 2
+    end = start + num_samples
+    return array[start:end]
+
