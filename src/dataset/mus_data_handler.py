@@ -58,9 +58,9 @@ class MusDataHandler:
         :param path: path to npz file with arrays of songs
         :return: tuple with X, y where X is array of mix and y array of vocals
         """
-        with np.load(self.path_to_npz, allow_pickle=True) as data:
+        with np.load(self.path_to_npz, allow_pickle=True, mmap_mode='r') as data:
             X = data['X']
             y = data['y']
-            X = np.asarray(X, dtype=object)
-            y = np.asarray(y, dtype=object)
+            #X = np.asarray(X, dtype=object)
+            #y = np.asarray(y, dtype=object)
         return X, y
