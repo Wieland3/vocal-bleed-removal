@@ -36,10 +36,6 @@ def zero_pad(array):
     """
     Pads the input audio array with zeros both at the beginning and at the end in the time domain.
     Works for both mono and stereo signals.
-
-    If the input array is mono (1D), zeros are added at both the beginning and the end.
-    If the input array is stereo (2D), zeros are added at both the beginning and the end of each channel.
-
     :param array: Input audio array, which can be mono (1D) or stereo (2D).
     :return: Padded audio array.
     """
