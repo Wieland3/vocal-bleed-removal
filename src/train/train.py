@@ -27,6 +27,9 @@ if __name__ == "__main__":
     tf_dataset = data.get_tf_dataset()
     tf_dataset = tf_dataset.shuffle(buffer_size=1000).batch(5).prefetch(tf.data.AUTOTUNE)
 
+    learning_rate = 0.0001
+    optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=learning_rate)
+
     model = wave_u_net(**params)
-    model.compile(optimizer="adam", loss="mse")
+    model.compile(optimizer=optimizer, loss="mse", metrics=['mae'])
     model.fit(tf_dataset, epochs=1, batch_size=5)
