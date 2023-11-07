@@ -1,4 +1,5 @@
 import sys
+import tensorflow as tf
 from src import constants
 from src.dataset.dataset import DataSet
 
@@ -23,8 +24,9 @@ params = {
 
 if __name__ == "__main__":
     data = DataSet()
-    X, y = data.create_dataset()
-    data = None
+    tf_dataset = data.get_tf_dataset()
+    tf_dataset = tf_dataset.shuffle(buffer_size=1000).batch(5).prefetch(tf.data.AUTOTUNE)
+
     model = wave_u_net(**params)
     model.compile(optimizer="adam", loss="mse")
-    model.fit(X,y, epochs=1, batch_size=1)
+    model.fit(tf_dataset, epochs=1, batch_size=5)

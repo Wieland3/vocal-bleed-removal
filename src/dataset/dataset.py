@@ -4,6 +4,7 @@ and testing.
 """
 
 import numpy as np
+import tensorflow as tf
 from src.dataset.mus_data_handler import MusDataHandler
 from src.audio_utils.audio_utils import zero_pad, center_crop
 from src import constants
@@ -14,15 +15,8 @@ class DataSet:
         handler = MusDataHandler()
         self.songs, self.vocals = handler.X, handler.y
 
-    def create_dataset(self):
-        X = []
-        y = []
-
+    def data_generator(self):
         for i in range(len(self.songs)):
-
-            if i > 2:
-                break
-
             song = zero_pad(self.songs[i])
             vocal = zero_pad(self.vocals[i])
 
@@ -30,10 +24,20 @@ class DataSet:
             step = constants.N_SAMPLES_OUT
 
             while r <= song.shape[0]:
-                X.append(np.array(song[l:r]))
-                y.append(center_crop(vocal[l:r]))
+                X_chunk = np.array(song[l:r])
+                y_chunk = center_crop(vocal[l:r])
+                yield X_chunk, y_chunk
 
                 l += step
                 r += step
 
-        return np.array(X), np.array(y)
+    def get_tf_dataset(self):
+        output_signature = (
+            tf.TensorSpec(shape=(constants.N_SAMPLES_IN, 2), dtype=tf.float32),
+            tf.TensorSpec(shape=(constants.N_SAMPLES_OUT, 2), dtype=tf.float32)
+        )
+
+        return tf.data.Dataset.from_generator(
+            self.data_generator,
+            output_signature=output_signature
+        )
