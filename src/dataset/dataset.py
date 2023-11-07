@@ -13,7 +13,6 @@ class DataSet:
     def __init__(self):
         handler = MusDataHandler()
         self.songs, self.vocals = handler.X, handler.y
-        self.create_dataset()
 
     def create_dataset(self):
         X = []
@@ -21,7 +20,7 @@ class DataSet:
 
         for i in range(len(self.songs)):
 
-            if i > 10:
+            if i > 2:
                 break
 
             song = zero_pad(self.songs[i])

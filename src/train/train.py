@@ -1,5 +1,6 @@
 import sys
 from src import constants
+from src.dataset.dataset import DataSet
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
@@ -21,5 +22,9 @@ params = {
 }
 
 if __name__ == "__main__":
-    m = wave_u_net(**params)
-    m.summary()
+    data = DataSet()
+    X, y = data.create_dataset()
+    data = None
+    model = wave_u_net(**params)
+    model.compile(optimizer="adam", loss="mse")
+    model.fit(X,y, epochs=1, batch_size=1)
