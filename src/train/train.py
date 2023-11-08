@@ -23,13 +23,31 @@ params = {
 }
 
 if __name__ == "__main__":
-    data = DataSet()
-    tf_dataset = data.get_tf_dataset()
-    tf_dataset = tf_dataset.shuffle(buffer_size=1000).batch(5).prefetch(tf.data.AUTOTUNE)
 
+    # Load training data
+    train = DataSet()
+    tf_dataset_train = train.get_tf_dataset()
+    tf_dataset_train = tf_dataset_train.shuffle(buffer_size=1000).batch(5).prefetch(tf.data.AUTOTUNE)
+
+    # Load testing data
+    test = DataSet(subsets="test")
+    tf_dataset_test = test.get_tf_dataset()
+    tf_dataset_test = tf_dataset_test.batch(5).prefetch(tf.data.AUTOTUNE)
+
+    # Tensorflow checkpoints
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/best_model/cp.ckpt",
+                              save_best_only=True,
+                              monitor='val_loss',
+                              mode='min',
+                              verbose=1)
+
+    # Model parameters
     learning_rate = 0.0001
     optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=learning_rate)
-
     model = wave_u_net(**params)
+
+    # Compile and Train
     model.compile(optimizer=optimizer, loss="mse", metrics=['mae'])
-    model.fit(tf_dataset, epochs=1, batch_size=5)
+    model.fit(tf_dataset_train, epochs=5, callbacks=[cp_callback], validation_data=tf_dataset_test)
+    model.save(constants.MODELS_DIR + "/full_train.keras")
+
