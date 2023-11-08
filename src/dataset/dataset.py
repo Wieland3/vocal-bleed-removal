@@ -20,16 +20,19 @@ class DataSet:
             song = zero_pad(self.songs[i]).astype(np.float16)
             vocal = zero_pad(self.vocals[i]).astype(np.float16)
 
-            l, r = 0, constants.N_SAMPLES_IN
-            step = constants.N_SAMPLES_OUT
+            yield from self.song_data_generator(song, vocal)
 
-            while r <= song.shape[0]:
-                X_chunk = np.array(song[l:r])
-                y_chunk = center_crop(vocal[l:r])
-                yield X_chunk, y_chunk
+    def song_data_generator(self, song, vocal):
+        l, r = 0, constants.N_SAMPLES_IN
+        step = constants.N_SAMPLES_OUT
 
-                l += step
-                r += step
+        while r <= song.shape[0]:
+            X_chunk = np.array(song[l:r])
+            y_chunk = center_crop(vocal[l:r])
+            yield X_chunk, y_chunk
+
+            l += step
+            r += step
 
     def get_tf_dataset(self):
         output_signature = (
