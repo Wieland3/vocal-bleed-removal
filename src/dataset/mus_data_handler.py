@@ -61,6 +61,4 @@ class MusDataHandler:
         with np.load(self.path_to_npz, allow_pickle=True, mmap_mode='r') as data:
             X = data['X']
             y = data['y']
-            #X = np.asarray(X, dtype=object)
-            #y = np.asarray(y, dtype=object)
         return X, y
