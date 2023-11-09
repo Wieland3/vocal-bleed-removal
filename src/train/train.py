@@ -35,7 +35,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(5).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/best_model/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/best_model_2/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
@@ -44,7 +44,10 @@ if __name__ == "__main__":
     # Model parameters
     learning_rate = 0.0001
     optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=learning_rate)
-    model = wave_u_net(**params)
+
+    #model = wave_u_net(**params)
+    checkpoint_path = constants.CHECKPOINTS_DIR + "/best_model/cp.ckpt"
+    model = tf.keras.models.load_model(checkpoint_path)
 
     # Compile and Train
     model.compile(optimizer=optimizer, loss="mse", metrics=['mae'])
