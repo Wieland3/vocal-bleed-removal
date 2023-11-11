@@ -14,6 +14,8 @@ EDA_DATA_DIR = os.path.join(TRACKS_DIR, "eda")
 # Files
 PATH_TO_RAW_TRAIN_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "raw_train_musdb18.npz")
 PATH_TO_RAW_TEST_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "raw_test_musdb18.npz")
+PATH_TO_EDIT_TRAIN_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "edit_train_musdb18.npz")
+PATH_TO_EDIT_TEST_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "edit_test_musdb18.npz")
 
 # Audio
 SAMPLE_RATE = 44100
