@@ -22,7 +22,8 @@ class DataSet:
 
             yield from self.song_data_generator(song, vocal)
 
-    def song_data_generator(self, song, vocal):
+    @staticmethod
+    def song_data_generator(song, vocal):
         l, r = 0, constants.N_SAMPLES_IN
         step = constants.N_SAMPLES_OUT
 
