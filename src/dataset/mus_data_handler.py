@@ -8,6 +8,7 @@ import musdb
 import numpy as np
 import os
 from src import constants
+from src.audio_utils.audio_utils import stereo_to_mono
 
 
 class MusDataHandler:
@@ -39,8 +40,8 @@ class MusDataHandler:
 
         for track in self.mus:
             if track.rate == 44100:
-                X.append(track.audio)
-                y.append(track.targets['vocals'].audio)
+                X.append(stereo_to_mono(track.audio))
+                y.append(stereo_to_mono(track.targets['vocals'].audio))
 
         X_obj_array = np.empty((len(X),), dtype=object)
         y_obj_array = np.empty((len(y),), dtype=object)
