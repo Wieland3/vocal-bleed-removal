@@ -18,7 +18,7 @@ params = {
   "input_size": 147443,
   "context": True,
   "upsampling_type": "learned",         # "learned" or "linear"
-  "output_activation": "linear",        # "linear" or "tanh"
+  "output_activation": "tanh",        # "linear" or "tanh"
   "output_type": "direct",          # "direct" or "difference"
 }
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(5).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/best_model_2/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/full_train_mono/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
@@ -45,12 +45,14 @@ if __name__ == "__main__":
     learning_rate = 0.0001
     optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=learning_rate)
 
-    #model = wave_u_net(**params)
-    checkpoint_path = constants.CHECKPOINTS_DIR + "/best_model/cp.ckpt"
-    model = tf.keras.models.load_model(checkpoint_path)
+    model = wave_u_net(**params)
+    model.summary()
+    #checkpoint_path = constants.CHECKPOINTS_DIR + "/best_model/cp.ckpt"
+    #model = tf.keras.models.load_model(checkpoint_path)
+
 
     # Compile and Train
-    model.compile(optimizer=optimizer, loss="mse", metrics=['mae'])
-    model.fit(tf_dataset_train, epochs=5, callbacks=[cp_callback], validation_data=tf_dataset_test)
-    model.save(constants.MODELS_DIR + "/full_train.keras")
+    model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
+    model.fit(tf_dataset_train, epochs=30, callbacks=[cp_callback], validation_data=tf_dataset_test)
+
 
