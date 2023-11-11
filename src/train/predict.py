@@ -12,7 +12,7 @@ from wave_u_net import wave_u_net
 if __name__ == "__main__":
     test = dataset.DataSet(subsets="test")
 
-    checkpoint_path = constants.CHECKPOINTS_DIR + "/best_model_2/cp.ckpt"
+    checkpoint_path = constants.CHECKPOINTS_DIR + "/best_model_4/cp.ckpt"
     model = tf.keras.models.load_model(checkpoint_path)
 
     """
@@ -38,8 +38,8 @@ if __name__ == "__main__":
     pred = np.concatenate(pred, axis=0)
     gt = np.concatenate(gt, axis=0)
 
-    audio_utils.save_array_as_wave(pred, constants.DEBUGGING_DATA_DIR + "/PRED1.wav")
-    audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT1.wav")
+    audio_utils.save_array_as_wave(pred, constants.DEBUGGING_DATA_DIR + "/PRED3.wav")
+    audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT3.wav")
 
 
 
