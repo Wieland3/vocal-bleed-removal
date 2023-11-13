@@ -12,7 +12,7 @@ params = {
   "kernel_size": 15,
   "merge_filter_size": 5,
   "source_names": ["vocals"],
-  "num_channels": 2,
+  "num_channels": 1,
   "output_filter_size": 1,
   "padding": "valid",
   "input_size": 147443,
