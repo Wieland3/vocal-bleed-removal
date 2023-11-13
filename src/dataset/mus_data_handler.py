@@ -7,28 +7,59 @@ It implements the MusDataHandler class that handles saving and reloading np arra
 import musdb
 import numpy as np
 import os
+import pyloudnorm as pyln
 from src import constants
 from src.audio_utils.audio_utils import stereo_to_mono
 
 
 class MusDataHandler:
-    def __init__(self, root=constants.MUSDB_DIR, subsets='train'):
+    def __init__(self, root=constants.MUSDB_DIR, subsets='train', use_artificial=False):
         """
         Initializes the MusDataHandler Class.
         If a saved npz file exists, it uses it to load the data.
         :param root: Path to the musdb dataset
-        :param subsets: "train" or "test"
+        :param subsets: "train" / "test" for musdb data, "art_train" / "art_test" for artificial data.
         """
+        # Field if artificial dataset is used or not.
+        self.art = use_artificial
+
         if subsets == "train":
-            self.path_to_npz = constants.PATH_TO_RAW_TRAIN_MUSDB_NPZ
+            if not self.art:
+                self.path_to_npz = constants.PATH_TO_RAW_TRAIN_MUSDB_NPZ
+            else:
+                self.path_to_npz = constants.PATH_TO_ART_TRAIN_MUSDB_NPZ
         elif subsets == "test":
-            self.path_to_npz = constants.PATH_TO_RAW_TEST_MUSDB_NPZ
+            if not self.art:
+                self.path_to_npz = constants.PATH_TO_RAW_TEST_MUSDB_NPZ
+            else:
+                self.path_to_npz = constants.PATH_TO_ART_TEST_MUSDB_NPZ
 
         if os.path.exists(self.path_to_npz):
             self.X, self.y = self.load_object_arrays_from_npz()
         else:
             self.mus = musdb.DB(root=root, subsets=subsets)
             self.X, self.y = self.stems_to_npz()
+
+    def edit_mixture(self, track):
+        """
+        Edits the mixture to create an artificial surrogate Dataset.
+        If self.art is set to false, the original mixture from the musdb dataset is returned.
+        :param track: The song to edit
+        :return: edited song if self.art is set to True else it returns the song unedited.
+        """
+        if not self.art:
+            return track.audio
+        else:
+            meter = pyln.Meter(constants.SAMPLE_RATE)
+            other_loudness = meter.integrated_loudness(track.targets['other'].audio)
+            vocal_loudness = meter.integrated_loudness(track.targets['vocals'].audio)
+
+            loudness_normalized_other = pyln.normalize.loudness(track.targets['other'].audio, other_loudness, -30)
+            loudness_normalized_vocal = pyln.normalize.loudness(track.targets['vocals'].audio, vocal_loudness, -20.0)
+
+            mix = loudness_normalized_other + loudness_normalized_vocal
+            peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
+            return peak_normalized_mix
 
     def stems_to_npz(self):
         """
@@ -40,7 +71,7 @@ class MusDataHandler:
 
         for track in self.mus:
             if track.rate == 44100:
-                X.append(stereo_to_mono(track.audio))
+                X.append(stereo_to_mono(self.edit_mixture(track)))
                 y.append(stereo_to_mono(track.targets['vocals'].audio))
 
         X_obj_array = np.empty((len(X),), dtype=object)
