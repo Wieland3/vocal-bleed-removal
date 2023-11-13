@@ -27,7 +27,7 @@ def stereo_to_mono(audio_stereo):
     if audio_stereo.ndim != 2 or audio_stereo.shape[1] != 2:
         raise ValueError("Input audio must be a stereo signal")
 
-    audio_mono = np.mean(audio_stereo, axis=1)
+    audio_mono = np.mean(audio_stereo, axis=1, keepdims=True)
 
     return audio_mono
 
