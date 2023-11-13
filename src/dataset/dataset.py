@@ -11,9 +11,11 @@ from src import constants
 
 
 class DataSet:
-    def __init__(self, subsets="train"):
-        handler = MusDataHandler(subsets=subsets)
+    def __init__(self, subsets="train", use_artificial=False):
+        handler = MusDataHandler(subsets=subsets, use_artificial=use_artificial)
         self.songs, self.vocals = handler.X, handler.y
+        print(self.songs[0].shape)
+        print(self.vocals[0].shape)
 
     def data_generator(self):
         for i in range(len(self.songs)):
@@ -37,8 +39,8 @@ class DataSet:
 
     def get_tf_dataset(self):
         output_signature = (
-            tf.TensorSpec(shape=(constants.N_SAMPLES_IN, 2), dtype=tf.float16),
-            tf.TensorSpec(shape=(constants.N_SAMPLES_OUT, 2), dtype=tf.float16)
+            tf.TensorSpec(shape=(constants.N_SAMPLES_IN, 1), dtype=tf.float16),
+            tf.TensorSpec(shape=(constants.N_SAMPLES_OUT, 1), dtype=tf.float16)
         )
 
         return tf.data.Dataset.from_generator(
