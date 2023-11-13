@@ -22,6 +22,7 @@ class MusDataHandler:
         """
         # Field if artificial dataset is used or not.
         self.art = use_artificial
+        self.subsets = subsets
 
         if subsets == "train":
             if not self.art:
@@ -61,6 +62,22 @@ class MusDataHandler:
             peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
             return peak_normalized_mix
 
+    def should_skip(self, index):
+        """
+        Function to check if a specific track should be skipped.
+        If artificial dataset is selected and the song is not in the whitelist it returns True.
+        :param index: Index of the song.
+        :return: True or False if Song should be skipped.
+        """
+        if self.art:
+            if self.subsets == "train":
+                if index not in constants.TRAIN_FEMALE_VOCS:
+                    return True
+            elif self.subsets == "test":
+                if index not in constants.VALID_FEMALE_VOCS:
+                    return True
+        return False
+
     def stems_to_npz(self):
         """
         Creates npz file of musdb dataset.
@@ -69,7 +86,11 @@ class MusDataHandler:
         X = []
         y = []
 
-        for track in self.mus:
+        for i, track in enumerate(self.mus):
+
+            if self.should_skip(i):
+                continue
+
             if track.rate == 44100:
                 X.append(stereo_to_mono(self.edit_mixture(track)))
                 y.append(stereo_to_mono(track.targets['vocals'].audio))
