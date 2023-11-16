@@ -62,3 +62,27 @@ def center_crop(array, num_samples=constants.N_SAMPLES_OUT):
     end = start + num_samples
     return array[start:end]
 
+
+def get_loudness_db(signal):
+    """
+    Calculates the loudness of a signal in db.
+    :param signal: The signal to operate on
+    :return: db Value of signal
+    """
+    rms = np.sqrt(np.mean(signal**2))
+    db = 20 * np.log10(rms)
+    return db
+
+
+def normalize_target_loudness(signal, target_db):
+    """
+    Changes a signal so that it has the target loudness
+    :param signal: Signal to normalize loudndess to target_db
+    :param target_db: Target loudness
+    :return: Signal with loudness normalized to target_db
+    """
+    current_db = get_loudness_db(signal)
+    gain_db = target_db - current_db
+    gain_linear = 10 ** (gain_db / 20)
+    return signal * gain_linear
+
