@@ -11,7 +11,7 @@ import pyloudnorm as pyln
 from scipy.signal import convolve
 import soundfile as sf
 from src import constants
-from src.audio_utils.audio_utils import stereo_to_mono
+from src.audio_utils.audio_utils import stereo_to_mono, normalize_target_loudness
 
 
 class MusDataHandler:
@@ -53,21 +53,16 @@ class MusDataHandler:
         if not self.art:
             return track.audio
         else:
-
             other_mono = stereo_to_mono(track.targets['other'].audio)
             vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
 
             rir, sr = sf.read(constants.RIRS_DIR + "/RIR1.wav")
-            rir = rir.reshape(-1,1)
+            rir = rir.reshape(-1, 1)
 
             convolved = convolve(other_mono, rir, mode='same')
 
-            meter = pyln.Meter(constants.SAMPLE_RATE)
-            other_loudness = meter.integrated_loudness(convolved)
-            vocal_loudness = meter.integrated_loudness(vocals_mono)
-
-            loudness_normalized_other = pyln.normalize.loudness(convolved, other_loudness, -30)
-            loudness_normalized_vocal = pyln.normalize.loudness(vocals_mono, vocal_loudness, -20.0)
+            loudness_normalized_other = normalize_target_loudness(convolved, -37)
+            loudness_normalized_vocal = normalize_target_loudness(vocals_mono, -20)
 
             mix = loudness_normalized_other + loudness_normalized_vocal
             peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
