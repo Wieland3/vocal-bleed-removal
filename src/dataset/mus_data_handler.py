@@ -8,6 +8,8 @@ import musdb
 import numpy as np
 import os
 import pyloudnorm as pyln
+from scipy.signal import convolve
+import soundfile as sf
 from src import constants
 from src.audio_utils.audio_utils import stereo_to_mono
 
@@ -51,12 +53,21 @@ class MusDataHandler:
         if not self.art:
             return track.audio
         else:
-            meter = pyln.Meter(constants.SAMPLE_RATE)
-            other_loudness = meter.integrated_loudness(track.targets['other'].audio)
-            vocal_loudness = meter.integrated_loudness(track.targets['vocals'].audio)
 
-            loudness_normalized_other = pyln.normalize.loudness(track.targets['other'].audio, other_loudness, -30)
-            loudness_normalized_vocal = pyln.normalize.loudness(track.targets['vocals'].audio, vocal_loudness, -20.0)
+            other_mono = stereo_to_mono(track.targets['other'].audio)
+            vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
+
+            rir, sr = sf.read(constants.RIRS_DIR + "/RIR1.wav")
+            rir = rir.reshape(-1,1)
+
+            convolved = convolve(other_mono, rir, mode='same')
+
+            meter = pyln.Meter(constants.SAMPLE_RATE)
+            other_loudness = meter.integrated_loudness(convolved)
+            vocal_loudness = meter.integrated_loudness(vocals_mono)
+
+            loudness_normalized_other = pyln.normalize.loudness(convolved, other_loudness, -30)
+            loudness_normalized_vocal = pyln.normalize.loudness(vocals_mono, vocal_loudness, -20.0)
 
             mix = loudness_normalized_other + loudness_normalized_vocal
             peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
@@ -92,7 +103,7 @@ class MusDataHandler:
                 continue
 
             if track.rate == 44100:
-                X.append(stereo_to_mono(self.edit_mixture(track)))
+                X.append(self.edit_mixture(track))
                 y.append(stereo_to_mono(track.targets['vocals'].audio))
 
         X_obj_array = np.empty((len(X),), dtype=object)
