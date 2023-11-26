@@ -7,8 +7,8 @@ It implements the MusDataHandler class that handles saving and reloading np arra
 import musdb
 import numpy as np
 import os
-import pyloudnorm as pyln
 from scipy.signal import convolve
+import warnings
 import soundfile as sf
 from src import constants
 from src.audio_utils.audio_utils import stereo_to_mono, normalize_target_loudness
@@ -51,23 +51,28 @@ class MusDataHandler:
         :return: edited song if self.art is set to True else it returns the song unedited.
         """
         if not self.art:
-            return track.audio
+            return track.audio, track.targets['vocals'].audio
         else:
             other_mono = stereo_to_mono(track.targets['other'].audio)
             vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
 
             rir, sr = sf.read(constants.RIRS_DIR + "/RIR1.wav")
             rir = rir.reshape(-1, 1)
-
             convolved = convolve(other_mono, rir, mode='same')
 
             loudness_normalized_other = normalize_target_loudness(convolved, -37)
+            loudness_normalized_other = np.clip(loudness_normalized_other, -1, 1)
+
             loudness_normalized_vocal = normalize_target_loudness(vocals_mono, -20)
+            loudness_normalized_vocal = np.clip(loudness_normalized_vocal, -1, 1)
 
             mix = loudness_normalized_other + loudness_normalized_vocal
-            peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
-            stacked_array = np.hstack([peak_normalized_mix, other_mono])
-            return stacked_array
+            mix = np.clip(mix, -1, 1)
+
+            #peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
+
+            stacked_array = np.hstack([mix, other_mono])
+            return stacked_array, loudness_normalized_vocal
 
     def should_skip(self, index):
         """
@@ -94,13 +99,13 @@ class MusDataHandler:
         y = []
 
         for i, track in enumerate(self.mus):
-
             if self.should_skip(i):
                 continue
 
             if track.rate == 44100:
-                X.append(self.edit_mixture(track))
-                y.append(track.targets['vocals'].audio)
+                mix, vocals = self.edit_mixture(track)
+                X.append(mix)
+                y.append(vocals)
 
         X_obj_array = np.empty((len(X),), dtype=object)
         y_obj_array = np.empty((len(y),), dtype=object)
