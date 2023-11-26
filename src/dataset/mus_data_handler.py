@@ -66,7 +66,8 @@ class MusDataHandler:
 
             mix = loudness_normalized_other + loudness_normalized_vocal
             peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
-            return peak_normalized_mix
+            stacked_array = np.hstack([peak_normalized_mix, other_mono])
+            return stacked_array
 
     def should_skip(self, index):
         """
@@ -99,7 +100,7 @@ class MusDataHandler:
 
             if track.rate == 44100:
                 X.append(self.edit_mixture(track))
-                y.append(stereo_to_mono(track.targets['vocals'].audio))
+                y.append(track.targets['vocals'].audio)
 
         X_obj_array = np.empty((len(X),), dtype=object)
         y_obj_array = np.empty((len(y),), dtype=object)
