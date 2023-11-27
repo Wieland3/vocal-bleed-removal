@@ -13,14 +13,12 @@ from src import constants
 class DataSet:
     def __init__(self, subsets="train", use_artificial=False):
         handler = MusDataHandler(subsets=subsets, use_artificial=use_artificial)
-        self.songs, self.vocals = handler.X, handler.y
-        print(self.songs[0].shape)
-        print(self.vocals[0].shape)
+        self.data = handler.data
 
     def data_generator(self):
-        for i in range(len(self.songs)):
-            song = zero_pad(self.songs[i]).astype(np.float16)
-            vocal = zero_pad(self.vocals[i]).astype(np.float16)
+        for mix, vocals in enumerate(self.data):
+            song = zero_pad(mix.astype(np.float16))
+            vocal = zero_pad(vocals.astype(np.float16))
 
             yield from self.song_data_generator(song, vocal)
 

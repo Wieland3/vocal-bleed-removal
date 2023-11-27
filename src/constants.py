@@ -1,22 +1,26 @@
 import os
 
+# If used from colab set to true
+COLAB = False
+
 # Folders
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRACKS_DIR = os.path.join(ROOT_DIR, "tracks")
-MUSDB_DIR = os.path.join(TRACKS_DIR, "musdb18")
-NPZ_DATA_DIR = os.path.join(ROOT_DIR, "npz_data")  # TODO Change
 DEBUGGING_DATA_DIR = os.path.join(TRACKS_DIR, "debugging")
 WAVE_UNET = os.path.join(ROOT_DIR, "wave-unet")
-MODELS_DIR = os.path.join(ROOT_DIR, "models")  # TODO NEEDS TO BE ADJUSTED
-CHECKPOINTS_DIR = os.path.join(MODELS_DIR, "checkpoints")
 EDA_DATA_DIR = os.path.join(TRACKS_DIR, "eda")
-RIRS_DIR = os.path.join(ROOT_DIR, "room_irs")
 
-# Files
-PATH_TO_RAW_TRAIN_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "raw_train_musdb18.npz")
-PATH_TO_RAW_TEST_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "raw_test_musdb18.npz")
-PATH_TO_ART_TRAIN_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "art_train_musdb18.npz")
-PATH_TO_ART_TEST_MUSDB_NPZ = os.path.join(NPZ_DATA_DIR, "art_test_musdb18.npz")
+if not COLAB:
+    MODELS_DIR = os.path.join(ROOT_DIR, "models")
+    MUSDB_DIR = os.path.join(TRACKS_DIR, "musdb18")
+    RIRS_DIR = os.path.join(ROOT_DIR, "room_irs")
+else:
+    MODELS_DIR = os.path.join(ROOT_DIR, "../drive/MyDrive/thesis/models")
+    MUSDB_DIR = os.path.join(TRACKS_DIR, "../drive/MyDrive/thesis/musdb18")
+    RIRS_DIR = os.path.join(ROOT_DIR, "../drive/MyDrive/thesis/room_irs")
+
+
+CHECKPOINTS_DIR = os.path.join(MODELS_DIR, "checkpoints")
 
 # Audio
 SAMPLE_RATE = 44100
