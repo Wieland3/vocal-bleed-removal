@@ -63,16 +63,16 @@ class MusDataHandler:
             loudness_normalized_other = normalize_target_loudness(convolved, -37)
             loudness_normalized_other = np.clip(loudness_normalized_other, -1, 1)
 
-            loudness_normalized_vocal = normalize_target_loudness(vocals_mono, -20)
-            loudness_normalized_vocal = np.clip(loudness_normalized_vocal, -1, 1)
+            #loudness_normalized_vocal = normalize_target_loudness(vocals_mono, -20)
+            #loudness_normalized_vocal = np.clip(loudness_normalized_vocal, -1, 1)
 
-            mix = loudness_normalized_other + loudness_normalized_vocal
+            mix = loudness_normalized_other + vocals_mono
             mix = np.clip(mix, -1, 1)
 
-            #peak_normalized_mix = pyln.normalize.peak(mix, -1.0)
+            stereo_vocals = np.concatenate([vocals_mono, vocals_mono], axis=1)
 
             stacked_array = np.hstack([mix, other_mono])
-            return stacked_array, loudness_normalized_vocal
+            return stacked_array, stereo_vocals
 
     def should_skip(self, index):
         """
@@ -81,6 +81,7 @@ class MusDataHandler:
         :param index: Index of the song.
         :return: True or False if Song should be skipped.
         """
+        return False
         if self.art:
             if self.subsets == "train":
                 if index not in constants.TRAIN_FEMALE_VOCS:
