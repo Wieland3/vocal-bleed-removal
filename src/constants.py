@@ -16,7 +16,7 @@ if not COLAB:
     RIRS_DIR = os.path.join(ROOT_DIR, "room_irs")
 else:
     MODELS_DIR = os.path.join(ROOT_DIR, "../drive/MyDrive/thesis/models")
-    MUSDB_DIR = os.path.join(TRACKS_DIR, "../drive/MyDrive/thesis/musdb18")
+    MUSDB_DIR = os.path.join(ROOT_DIR, "../drive/MyDrive/thesis/musdb18")
     RIRS_DIR = os.path.join(ROOT_DIR, "../drive/MyDrive/thesis/room_irs")
 
 
