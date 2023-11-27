@@ -29,20 +29,20 @@ if __name__ == "__main__":
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
     tf_dataset_train = train.get_tf_dataset()
-    tf_dataset_train = tf_dataset_train.shuffle(buffer_size=1000).batch(5).prefetch(tf.data.AUTOTUNE)
+    tf_dataset_train = tf_dataset_train.shuffle(buffer_size=1000).batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Load testing data
     test = DataSet(subsets="test", use_artificial=USE_ARTIFICIAL)
     tf_dataset_test = test.get_tf_dataset()
-    tf_dataset_test = tf_dataset_test.batch(5).prefetch(tf.data.AUTOTUNE)
+    tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/exploit_try_3/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
                               verbose=1)
-    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=5, verbose=1)
+    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1)
     callbacks_list = [cp_callback, early_stopping_callback]
 
     # Model parameters
@@ -51,12 +51,9 @@ if __name__ == "__main__":
 
     model = wave_u_net(**params)
     model.summary()
-    #checkpoint_path = constants.CHECKPOINTS_DIR + "/best_model/cp.ckpt"
-    #model = tf.keras.models.load_model(checkpoint_path)
-
-
+    
     # Compile and Train
     model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
-    model.fit(tf_dataset_train, epochs=30, callbacks=callbacks_list, validation_data=tf_dataset_test)
+    model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test)
 
 
