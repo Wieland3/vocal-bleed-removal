@@ -4,10 +4,10 @@ import os
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRACKS_DIR = os.path.join(ROOT_DIR, "tracks")
 MUSDB_DIR = os.path.join(TRACKS_DIR, "musdb18")
-NPZ_DATA_DIR = os.path.join(ROOT_DIR, "npz_data")
+NPZ_DATA_DIR = os.path.join(ROOT_DIR, "npz_data")  # TODO Change
 DEBUGGING_DATA_DIR = os.path.join(TRACKS_DIR, "debugging")
 WAVE_UNET = os.path.join(ROOT_DIR, "wave-unet")
-MODELS_DIR = os.path.join(ROOT_DIR, "models")
+MODELS_DIR = os.path.join(ROOT_DIR, "models")  # TODO NEEDS TO BE ADJUSTED
 CHECKPOINTS_DIR = os.path.join(MODELS_DIR, "checkpoints")
 EDA_DATA_DIR = os.path.join(TRACKS_DIR, "eda")
 RIRS_DIR = os.path.join(ROOT_DIR, "room_irs")
