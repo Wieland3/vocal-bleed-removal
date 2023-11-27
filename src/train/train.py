@@ -47,11 +47,11 @@ if __name__ == "__main__":
 
     # Model parameters
     learning_rate = 0.0001
-    optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=learning_rate)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
     model = wave_u_net(**params)
     model.summary()
-    
+
     # Compile and Train
     model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
     model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test)
