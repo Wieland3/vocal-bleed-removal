@@ -16,7 +16,7 @@ class DataSet:
         self.data = handler.data
 
     def data_generator(self):
-        for mix, vocals in enumerate(self.data):
+        for mix, vocals in self.data:
             song = zero_pad(mix.astype(np.float16))
             vocal = zero_pad(vocals.astype(np.float16))
 
