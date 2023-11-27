@@ -44,4 +44,4 @@ class DataSet:
         return tf.data.Dataset.from_generator(
             self.data_generator,
             output_signature=output_signature
-        )
+        ).repeat()
