@@ -42,7 +42,7 @@ if __name__ == "__main__":
                               monitor='val_loss',
                               mode='min',
                               verbose=1)
-    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1)
+    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=5, verbose=1)
     callbacks_list = [cp_callback, early_stopping_callback]
 
     # Model parameters
