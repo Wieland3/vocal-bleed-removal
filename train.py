@@ -54,6 +54,6 @@ if __name__ == "__main__":
 
     # Compile and Train
     model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
-    model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test)
+    model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2000)
 
 

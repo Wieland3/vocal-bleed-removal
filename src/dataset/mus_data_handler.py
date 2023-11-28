@@ -13,7 +13,7 @@ from src.audio_utils.audio_utils import stereo_to_mono, normalize_target_loudnes
 
 
 class MusDataHandler:
-    def __init__(self, root=constants.MUSDB_DIR, subsets='train', use_artificial=False):
+    def __init__(self, root=constants.MUSDB_DIR, subsets='train', use_artificial=False, infinite=True):
         """
         Initializes the MusDataHandler Class.
         If a saved npz file exists, it uses it to load the data.
@@ -24,7 +24,7 @@ class MusDataHandler:
         self.art = use_artificial
         self.subsets = subsets
         self.mus = musdb.DB(root=root, subsets=subsets)
-        self.data = self.data_generator()
+        self.data = self.data_generator(infinite=infinite)
         self.rir = self.get_rir()
 
     @staticmethod
@@ -78,12 +78,16 @@ class MusDataHandler:
                     return True
         return False
 
-    def data_generator(self):
+    def data_generator(self, infinite=True):
         """
         Generates one song of mix, vocals.
         :yields: mix, vocals
         """
-        for i, track in enumerate(self.mus):
-            if track.rate == 44100:
-                mix, vocals = self.edit_mixture(track)
-                yield mix, vocals
+        while True:
+            for i, track in enumerate(self.mus):
+                if track.rate == 44100:
+                    mix, vocals = self.edit_mixture(track)
+                    yield mix, vocals
+
+            if not infinite:
+                break
