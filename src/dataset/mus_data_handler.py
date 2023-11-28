@@ -71,7 +71,7 @@ class MusDataHandler:
             if self.subsets == "train":
                 loudness = randrange(-40, -30, 1)
             else:
-                loudness = -37
+                loudness = -35
 
             loudness_normalized_other = normalize_target_loudness(convolved, loudness)
             loudness_normalized_other = np.clip(loudness_normalized_other, -1, 1)
