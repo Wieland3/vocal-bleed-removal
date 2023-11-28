@@ -8,8 +8,10 @@ import musdb
 import numpy as np
 from scipy.signal import convolve
 import soundfile as sf
+import librosa
 from src import constants
 from src.audio_utils.audio_utils import stereo_to_mono, normalize_target_loudness
+from random import randrange, uniform, random
 
 
 class MusDataHandler:
@@ -25,16 +27,30 @@ class MusDataHandler:
         self.subsets = subsets
         self.mus = musdb.DB(root=root, subsets=subsets)
         self.data = self.data_generator(infinite=infinite)
-        self.rir = self.get_rir()
 
-    @staticmethod
-    def get_rir():
+    def get_rir(self):
         """
-        Function to load room impulse response
+        Function to load and augment room impulse response
         :return: RIR as array
         """
         rir, _ = sf.read(constants.RIRS_DIR + "/RIR1.wav")
-        return rir.reshape(-1, 1)
+        rir = rir.reshape(-1, 1)
+
+        if self.subsets == "train":
+
+            if random() < 0.33:
+                noise_level = uniform(0.05, 0.25)
+                white_noise = np.random.normal(0, 1, rir.shape[0])
+                white_noise = white_noise.reshape(-1, 1)
+
+                rir_max = np.max(np.abs(rir))
+                noise_max = np.max(np.abs(white_noise))
+                scaled_noise = white_noise * (rir_max / noise_max) * noise_level
+
+                rir = rir + scaled_noise
+                rir = np.clip(rir, -1, 1)
+
+        return rir
 
     def edit_mixture(self, track):
         """
@@ -49,9 +65,15 @@ class MusDataHandler:
             other_mono = stereo_to_mono(track.targets['other'].audio)
             vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
 
-            convolved = convolve(other_mono, self.rir, mode='same')
+            rir = self.get_rir()
+            convolved = convolve(other_mono, rir, mode='same')
 
-            loudness_normalized_other = normalize_target_loudness(convolved, -37)
+            if self.subsets == "train":
+                loudness = randrange(-40, -30, 1)
+            else:
+                loudness = -37
+
+            loudness_normalized_other = normalize_target_loudness(convolved, loudness)
             loudness_normalized_other = np.clip(loudness_normalized_other, -1, 1)
 
             mix = loudness_normalized_other + vocals_mono
