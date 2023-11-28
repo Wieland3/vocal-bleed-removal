@@ -28,7 +28,7 @@ if __name__ == "__main__":
     guitar, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Guitar.wav")
     guitar = np.expand_dims(guitar, axis=-1)
 
-    bleed = np.add(piano * 0.5, guitar * 0.5)
+    bleed = np.add(piano * 0.2, guitar * 0.8)
 
     vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
 
