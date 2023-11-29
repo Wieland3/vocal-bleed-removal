@@ -37,7 +37,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/exploit_selected_train/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
@@ -54,6 +54,6 @@ if __name__ == "__main__":
 
     # Compile and Train
     model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
-    model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=813, validation_steps=560)
+    model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2124)
 
 
