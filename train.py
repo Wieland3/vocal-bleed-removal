@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
     tf_dataset_train = train.get_tf_dataset()
-    tf_dataset_train = tf_dataset_train.shuffle(buffer_size=1000).batch(16).prefetch(tf.data.AUTOTUNE)
+    tf_dataset_train = tf_dataset_train.shuffle(buffer_size=10000).batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Load testing data
     test = DataSet(subsets="test", use_artificial=USE_ARTIFICIAL)
