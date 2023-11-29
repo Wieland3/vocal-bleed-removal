@@ -107,8 +107,6 @@ class MusDataHandler:
         """
         while True:
             for i, track in enumerate(self.mus):
-                if self.should_skip(i):
-                    continue
                 if track.rate == 44100:
                     mix, vocals = self.edit_mixture(track)
                     yield mix, vocals
