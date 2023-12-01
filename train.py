@@ -12,7 +12,7 @@ params = {
   "kernel_size": 15,
   "merge_filter_size": 5,
   "source_names": ["vocals"],
-  "num_channels": 2,
+  "num_channels": 1,
   "output_filter_size": 1,
   "padding": "valid",
   "input_size": 147443,
@@ -24,12 +24,12 @@ params = {
 
 if __name__ == "__main__":
 
-    USE_ARTIFICIAL = True
+    USE_ARTIFICIAL = False
 
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
     tf_dataset_train = train.get_tf_dataset()
-    tf_dataset_train = tf_dataset_train.shuffle(buffer_size=10000).batch(16).prefetch(tf.data.AUTOTUNE)
+    tf_dataset_train = tf_dataset_train.shuffle(buffer_size=4000).batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Load testing data
     test = DataSet(subsets="test", use_artificial=USE_ARTIFICIAL)
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',

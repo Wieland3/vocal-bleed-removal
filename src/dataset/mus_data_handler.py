@@ -60,7 +60,7 @@ class MusDataHandler:
         :return: edited song if self.art is set to True else it returns the song unedited.
         """
         if not self.art:
-            return track.audio, track.targets['vocals'].audio
+            return stereo_to_mono(track.audio), stereo_to_mono(track.targets['vocals'].audio)
         else:
             other_mono = stereo_to_mono(track.targets['other'].audio)
             vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
