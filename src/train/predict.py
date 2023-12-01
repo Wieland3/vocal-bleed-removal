@@ -12,7 +12,7 @@ from wave_u_net import wave_u_net
 if __name__ == "__main__":
     test = dataset.DataSet(subsets="test")
 
-    checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_try_3/cp.ckpt"
+    checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
     model = tf.keras.models.load_model(checkpoint_path)
 
     """
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     guitar, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Guitar.wav")
     guitar = np.expand_dims(guitar, axis=-1)
 
-    bleed = np.add(piano * 0.2, guitar * 0.8)
+    bleed = np.add(piano * 0.5, guitar * 0.5)
 
     vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
 
