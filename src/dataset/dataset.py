@@ -10,6 +10,19 @@ from src.audio_utils.audio_utils import zero_pad, center_crop
 from src import constants
 
 
+def song_data_generator(song, vocal):
+    l, r = 0, constants.N_SAMPLES_IN
+    step = constants.N_SAMPLES_OUT
+
+    while r <= song.shape[0]:
+        X_chunk = np.array(song[l:r])
+        y_chunk = center_crop(vocal[l:r])
+        yield X_chunk, y_chunk
+
+        l += step
+        r += step
+
+
 class DataSet:
     def __init__(self, subsets="train", use_artificial=False):
         handler = MusDataHandler(subsets=subsets, use_artificial=use_artificial)
@@ -20,20 +33,7 @@ class DataSet:
             song = zero_pad(mix.astype(np.float16))
             vocal = zero_pad(vocals.astype(np.float16))
 
-            yield from self.song_data_generator(song, vocal)
-
-    @staticmethod
-    def song_data_generator(song, vocal):
-        l, r = 0, constants.N_SAMPLES_IN
-        step = constants.N_SAMPLES_OUT
-
-        while r <= song.shape[0]:
-            X_chunk = np.array(song[l:r])
-            y_chunk = center_crop(vocal[l:r])
-            yield X_chunk, y_chunk
-
-            l += step
-            r += step
+            yield from song_data_generator(song, vocal)
 
     def get_tf_dataset(self):
         output_signature = (
