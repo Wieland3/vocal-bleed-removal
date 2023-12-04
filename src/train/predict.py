@@ -27,9 +27,8 @@ def predict_song(X, exploited):
     """
     Predicts an entire song and returns prediction
     :param X: Song to predict (if exploited needs to contain clean sources in right channel)
-    :param y: GT of song to predict
     :param exploited: If exploited model should be used
-    :return: Unbleeded song, bleeded song
+    :return: Unbleeded song
     """
     pred = []
 
@@ -46,6 +45,22 @@ def predict_song(X, exploited):
         pred = audio_utils.stereo_to_mono(pred)
 
     return pred
+
+
+def get_ground_truth(y):
+    """
+    Gets the ground truth for a song.
+    :param y:
+    :return:
+    """
+    gt = []
+
+    for i, (_, y_chunk) in enumerate(dataset.song_data_generator(y, y)):
+        gt.append(y_chunk)
+
+    gt = np.concatenate(gt, axis=0)
+
+    return gt
 
 
 if __name__ == "__main__":
