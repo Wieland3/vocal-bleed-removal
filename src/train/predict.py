@@ -9,46 +9,82 @@ import sys
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
 
-if __name__ == "__main__":
-    test = dataset.DataSet(subsets="test")
 
-    checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
-    model = tf.keras.models.load_model(checkpoint_path)
+def load_model(exploited):
+    """
+    Loads correct model.
+    :param exploited: If exploited Model should be used
+    :return: keras Model
+    """
+    if not exploited:
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
+    else:
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
+    return tf.keras.models.load_model(checkpoint_path)
+
+
+def predict_song(X, exploited):
+    """
+    Predicts an entire song and returns prediction
+    :param X: Song to predict (if exploited needs to contain clean sources in right channel)
+    :param y: GT of song to predict
+    :param exploited: If exploited model should be used
+    :return: Unbleeded song, bleeded song
+    """
+    pred = []
+
+    model = load_model(exploited=exploited)
+
+    for i, (X_chunk, _) in enumerate(dataset.song_data_generator(X, X)):
+        X_chunk_batch = np.expand_dims(X_chunk, axis=0)
+        y_pred_chunk = model.predict(X_chunk_batch)['vocals'].squeeze(0)
+        pred.append(y_pred_chunk)
+
+    pred = np.concatenate(pred, axis=0)
+
+    if exploited:
+        pred = audio_utils.stereo_to_mono(pred)
+
+    return pred
+
+
+if __name__ == "__main__":
+
+    exploited = True
 
     """
     song_index = 2
     song = test.songs[song_index]
     vocals = test.vocals[song_index]
     """
-    pred = []
-    gt = []
 
     piano, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Piano.wav")
     piano = audio_utils.stereo_to_mono(piano)
     guitar, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Guitar.wav")
     guitar = np.expand_dims(guitar, axis=-1)
-
-    bleed = np.add(piano * 0.5, guitar * 0.5)
-
     vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
 
+    clean_sources = np.add(piano * 0.5, guitar * 0.5)
+    print("CLEAN SOURCES BEFORE", clean_sources.shape)
+    clean_sources = audio_utils.zero_pad(clean_sources)
+    print("CLEAN SOURCES AFTER", clean_sources.shape)
     vocals = np.expand_dims(vocals, axis=-1)
+    print("VOCS BEFORE", vocals.shape)
+    vocals = audio_utils.zero_pad(vocals)
+    print("VOCS AFTER", vocals.shape)
 
-    audio_utils.save_array_as_wave(bleed, constants.DEBUGGING_DATA_DIR + "/bleed.wav")
+    if not exploited:
+        X = vocals
+    else:
+        X = np.hstack([vocals, clean_sources])
 
-    X = np.hstack([vocals, bleed])
-
-    for i, (X_chunk, y_chunk) in enumerate(test.song_data_generator(X, vocals)):
-        X_chunk_batch = np.expand_dims(X_chunk, axis=0)
-        y_pred_chunk = model.predict(X_chunk_batch)['vocals'].squeeze(0)
-        pred.append(y_pred_chunk)
-        gt.append(y_chunk)
-
-    pred = audio_utils.stereo_to_mono(np.concatenate(pred, axis=0))
-    gt = np.concatenate(gt, axis=0)
-
-    audio_utils.save_array_as_wave(pred, constants.DEBUGGING_DATA_DIR + "/pred_exploit_3.wav")
-    audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
+    prediction = predict_song(X, exploited)
+    vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
+    print(vocals.shape)
+    print(prediction.shape)
+    audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/pred_exploited.wav")
+    audio_utils.save_array_as_wave(vocals, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
 
