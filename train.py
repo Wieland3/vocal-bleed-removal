@@ -24,7 +24,7 @@ params = {
 
 if __name__ == "__main__":
 
-    USE_ARTIFICIAL = True
+    USE_ARTIFICIAL = False
 
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
