@@ -24,7 +24,7 @@ params = {
 
 if __name__ == "__main__":
 
-    USE_ARTIFICIAL = False
+    USE_ARTIFICIAL = True
 
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',

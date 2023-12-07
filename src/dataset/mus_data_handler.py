@@ -60,7 +60,24 @@ class MusDataHandler:
         :return: edited song if self.art is set to True else it returns the song unedited.
         """
         if not self.art:
-            return stereo_to_mono(track.audio), stereo_to_mono(track.targets['vocals'].audio)
+            other_mono = stereo_to_mono(track.targets['other'].audio)
+            vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
+
+            rir = self.get_rir()
+            convolved = convolve(other_mono, rir, mode='same')
+
+            if self.subsets == "train":
+                loudness = randrange(-40, -30, 1)
+            else:
+                loudness = -35
+
+            loudness_normalized_other = normalize_target_loudness(convolved, loudness)
+            loudness_normalized_other = np.clip(loudness_normalized_other, -1, 1)
+
+            mix = loudness_normalized_other + vocals_mono
+            mix = np.clip(mix, -1, 1)
+
+            return mix, vocals_mono
         else:
             other_mono = stereo_to_mono(track.targets['other'].audio)
             vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
@@ -107,8 +124,6 @@ class MusDataHandler:
         """
         while True:
             for i, track in enumerate(self.mus):
-                if self.should_skip(i):
-                    continue
                 if track.rate == 44100:
                     mix, vocals = self.edit_mixture(track)
                     yield mix, vocals
