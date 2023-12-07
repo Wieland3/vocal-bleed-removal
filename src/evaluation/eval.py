@@ -3,6 +3,7 @@ from mir_eval.separation import bss_eval_sources
 
 from src.train import predict
 from src.dataset.dataset import MusDataHandler
+from src.train.loss import frequency_domain_loss
 
 
 class Eval:
@@ -11,6 +12,8 @@ class Eval:
 
     def evaluate_model(self, exploited):
         sdrs = []
+        freq_loss = []
+
         for i, (mix, vocals) in enumerate(self.handler.data):
             if not exploited:
                 mix = mix[:,0]
@@ -21,12 +24,14 @@ class Eval:
             vocals = np.expand_dims(vocals, axis=0)
 
             sdrs.append(bss_eval_sources(vocals, prediction)[0])
+            freq_loss.append(frequency_domain_loss(vocals, prediction))
 
         print(sdrs)
-        return np.average(sdrs)
+        print(freq_loss)
+        return np.average(sdrs), np.average(freq_loss)
 
 
 e = Eval()
-res = e.evaluate_model(True)
+res = e.evaluate_model(False)
 print(res)
 
