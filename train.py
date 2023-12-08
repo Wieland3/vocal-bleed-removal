@@ -49,7 +49,8 @@ if __name__ == "__main__":
     learning_rate = 0.0001
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
-    model = wave_u_net(**params)
+    #model = wave_u_net(**params)
+    model = tf.keras.models.load_model(constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt")
     model.summary()
 
     # Compile and Train
