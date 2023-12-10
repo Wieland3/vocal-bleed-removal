@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 
 
@@ -8,3 +9,10 @@ def frequency_domain_loss(y_true, y_pred):
     loss = tf.reduce_mean(tf.abs(tf.math.subtract(fft_y_true, fft_y_pred)) ** 2)
 
     return loss
+
+
+def sdr(y_true, y_pred):
+    numerator = np.sum(np.square(y_true))
+    denominator = np.sum(np.square(np.subtract(y_true, y_pred)))
+    return 10 * np.log10(numerator / denominator)
+

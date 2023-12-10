@@ -34,6 +34,9 @@ def predict_song(X, exploited):
 
     model = load_model(exploited=exploited)
 
+    if X.ndim == 1:
+        X = np.expand_dims(X, axis=-1)
+
     for i, (X_chunk, _) in enumerate(dataset.song_data_generator(X, X)):
         X_chunk_batch = np.expand_dims(X_chunk, axis=0)
         y_pred_chunk = model.predict(X_chunk_batch)['vocals'].squeeze(0)
