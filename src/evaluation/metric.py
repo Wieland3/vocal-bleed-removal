@@ -12,7 +12,10 @@ def frequency_domain_loss(y_true, y_pred):
 
 
 def sdr(y_true, y_pred):
+    delta = 1e-7
     numerator = np.sum(np.square(y_true))
     denominator = np.sum(np.square(np.subtract(y_true, y_pred)))
+    numerator += delta
+    denominator += delta
     return 10 * np.log10(numerator / denominator)
 
