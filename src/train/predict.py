@@ -17,7 +17,7 @@ def load_model(exploited):
     :return: keras Model
     """
     if not exploited:
-        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt"
     else:
         checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
     return tf.keras.models.load_model(checkpoint_path)
@@ -33,6 +33,7 @@ def predict_song(X, exploited):
     pred = []
 
     model = load_model(exploited=exploited)
+    X = audio_utils.zero_pad(X)
 
     if X.ndim == 1:
         X = np.expand_dims(X, axis=-1)
@@ -57,6 +58,7 @@ def get_ground_truth(y):
     :return:
     """
     gt = []
+    y = audio_utils.zero_pad(y)
 
     for i, (_, y_chunk) in enumerate(dataset.song_data_generator(y, y)):
         gt.append(y_chunk)
