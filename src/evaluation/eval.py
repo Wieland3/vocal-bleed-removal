@@ -19,12 +19,8 @@ class Eval:
         for i, _ in enumerate(self.handler.data):
             pred, _ = sf.read(f"{constants.TRACKS_DIR}/eda/moises_test/left_{i}.mp3")
             pred = audio_utils.stereo_to_mono(pred).squeeze(1)
-            audio_utils.save_array_as_wave(pred,
-                                           constants.TRACKS_DIR + f"/eda/art_test/pred_{i}.wav")
-            vocals, _ = sf.read(f"{constants.TRACKS_DIR}/eda/art_test/left_{i}.wav")
-            vocals = vocals[:pred.shape[0]]
-            print("VOC SHAPE", vocals.shape)
-            print("PRED SHAPE", pred.shape)
+            vocals, _ = sf.read(f"{constants.TRACKS_DIR}/eda/art_test/left_{i}.mp3")
+            vocals = audio_utils.stereo_to_mono(vocals).squeeze(1)
             sdrs.append(sdr(vocals, pred))
             l1.append(l1_loss_db(vocals, pred))
             print(sdrs)
