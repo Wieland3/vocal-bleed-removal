@@ -17,7 +17,7 @@ def load_model(exploited):
     :return: keras Model
     """
     if not exploited:
-        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt"
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
     else:
         checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
     return tf.keras.models.load_model(checkpoint_path)
@@ -86,11 +86,9 @@ if __name__ == "__main__":
 
     clean_sources = np.add(piano * 0.5, guitar * 0.5)
     print("CLEAN SOURCES BEFORE", clean_sources.shape)
-    clean_sources = audio_utils.zero_pad(clean_sources)
     print("CLEAN SOURCES AFTER", clean_sources.shape)
     vocals = np.expand_dims(vocals, axis=-1)
     print("VOCS BEFORE", vocals.shape)
-    vocals = audio_utils.zero_pad(vocals)
     print("VOCS AFTER", vocals.shape)
 
     if not exploited:
@@ -99,12 +97,12 @@ if __name__ == "__main__":
         X = np.hstack([vocals, clean_sources])
 
     prediction = predict_song(X, exploited)
-    vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
+    gt = get_ground_truth(vocals)
     print(vocals.shape)
     print(prediction.shape)
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/pred_exploited.wav")
-    audio_utils.save_array_as_wave(vocals, constants.DEBUGGING_DATA_DIR + "/GT.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/pred_full_train_art_exploited.wav")
+    audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
 
