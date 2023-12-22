@@ -70,7 +70,7 @@ def custom_model():
     # Multiply Binary Mask with stft
     x = tf.keras.layers.Multiply()([x, mag])
 
-    complex = tf.cast(x, tf.complex64) * tf.exp(1j * tf.cast(phase, tf.complex64))
+    complex = tf.complex(x * tf.cos(phase), x * tf.sin(phase))
 
     # Convert back into time domain
     x = tf.signal.inverse_stft(complex, 2048, 512)
