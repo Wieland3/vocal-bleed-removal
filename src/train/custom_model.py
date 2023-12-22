@@ -65,7 +65,7 @@ def custom_model():
     # Restore shapes
     x = tf.keras.layers.Conv1D(1025, 1, padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.activations.sigmoid()(x)
+    x = tf.keras.layers.Activation(activation='sigmoid')(x)
 
     # Multiply Binary Mask with stft
     x = tf.keras.layers.Multiply()([x, mag])
