@@ -82,5 +82,5 @@ def custom_model():
     x = tf.keras.layers.Concatenate()([x, wu['vocals']])
     x = tf.keras.layers.Conv1D(1,1, activation='tanh', padding='same')(x)
 
-    model = tf.keras.Model(inputs=[inputs], outputs=x)
+    model = tf.keras.Model(inputs=inputs, outputs=x)
     return model

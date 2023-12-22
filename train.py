@@ -5,6 +5,7 @@ from src.dataset.dataset import DataSet
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
+from src.train import custom_model
 
 params = {
   "num_initial_filters": 12,
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/custom_model_full_train/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     learning_rate = 0.0001
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
-    model = wave_u_net(**params)
+    model = custom_model.custom_model()
     #model = tf.keras.models.load_model(constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt")
     model.summary()
 
