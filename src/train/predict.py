@@ -5,6 +5,7 @@ import soundfile as sf
 from src.dataset import dataset
 from src.audio_utils import audio_utils
 import sys
+from src.audio_utils.noise_gate_factory import NoiseGateFactory
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
@@ -100,8 +101,18 @@ if __name__ == "__main__":
     gt = get_ground_truth(vocals)
     print(vocals.shape)
     print(prediction.shape)
+    prediction = prediction.squeeze(axis=-1)
+
+    noise_gate = NoiseGateFactory().create_noise_gate("spectral", strategy="percentile", value=95)
+    prediction = noise_gate.process(prediction)
+    print(type(prediction))
+    print(prediction)
+    print(prediction.shape)
+    prediction = np.expand_dims(prediction, axis=-1)
+    print(prediction.shape)
+
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/pred_full_train_art_exploited.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/pred_full_train_art_exploited_spectral_noise_95.wav")
     audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
