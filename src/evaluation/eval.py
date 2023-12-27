@@ -1,9 +1,11 @@
+import librosa.util
 import numpy as np
 
 from src.train import predict
 from src.dataset.dataset import MusDataHandler
 from src.evaluation.metric import l1_loss_db, sdr
 from src.audio_utils import audio_utils
+from src.audio_utils.noise_gate_factory import NoiseGateFactory
 from src import constants
 import soundfile as sf
 
@@ -19,8 +21,10 @@ class Eval:
         for i, _ in enumerate(self.handler.data):
             pred, _ = sf.read(f"{constants.TRACKS_DIR}/eda/moises_test/left_{i}.mp3")
             pred = audio_utils.stereo_to_mono(pred).squeeze(1)
-            vocals, _ = sf.read(f"{constants.TRACKS_DIR}/eda/art_test/left_{i}.mp3")
-            vocals = audio_utils.stereo_to_mono(vocals).squeeze(1)
+            vocals, _ = sf.read(f"{constants.TRACKS_DIR}/eda/art_test/left_{i}.wav")
+            vocals = vocals[:pred.shape[0]]
+            vocals = librosa.util.normalize(vocals)
+            pred = librosa.util.normalize(pred)
             sdrs.append(sdr(vocals, pred))
             l1.append(l1_loss_db(vocals, pred))
             print(sdrs)
@@ -35,12 +39,10 @@ class Eval:
         for i, (mix, vocals) in enumerate(self.handler.data):
             if not exploited:
                 mix = mix[:,0]
-            else:
-                mix = self.corrupt_clean_sources(mix)
             vocals = predict.get_ground_truth(vocals[:,0])
             prediction = predict.predict_song(mix, exploited=exploited)[:,0]
-            audio_utils.save_array_as_wave(prediction,
-                                           constants.TRACKS_DIR + f"/eda/art_test/pred_{i}.wav")
+            noise_gate = NoiseGateFactory().create_noise_gate("spectral", strategy="percentile", value=90)
+            prediction = noise_gate.process(prediction)
             sdrs.append(sdr(vocals, prediction))
             l1.append(l1_loss_db(vocals, prediction))
             print(sdrs)
