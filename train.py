@@ -5,17 +5,17 @@ from src.dataset.dataset import DataSet
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
-from src.train import custom_model
+from src.train import demucs
 
 params = {
-  "num_initial_filters": 12,
-  "num_layers": 12,
-  "kernel_size": 15,
+  "num_initial_filters": 64,
+  "num_layers": 3,
+  "kernel_size": 8,
   "merge_filter_size": 5,
   "source_names": ["vocals"],
   "num_channels": 1,
   "output_filter_size": 1,
-  "padding": "valid",
+  "padding": "same",
   "input_size": 147443,
   "context": True,
   "upsampling_type": "learned",         # "learned" or "linear"
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/custom_model_full_train/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/demucs_full_train/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     learning_rate = 0.0001
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
-    model = custom_model.custom_model()
+    model = demucs.demucs()
     #model = tf.keras.models.load_model(constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt")
     model.summary()
 
