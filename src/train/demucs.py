@@ -2,14 +2,17 @@ import tensorflow as tf
 from src import constants
 
 class GLU(tf.keras.layers.Layer):
-    def __init__(self, bias=True, dim=-1, **kwargs):
+    def __init__(self, bias=True, dim=-1, n_units=2, **kwargs):
         super(GLU, self).__init__(**kwargs)
         self.bias = bias
         self.dim = dim
-        self.dense = tf.keras.layers.Dense(2, use_bias=bias)
+        self.out_dense = tf.keras.layers.Dense(n_units)
+        self.gate_dense = tf.keras.layers.Dense(n_units)
 
     def call(self, x):
         out, gate = tf.split(x, num_or_size_splits=2, axis=self.dim)
+        out = self.out_dense(out)
+        gate = self.gate_dense(gate)
         gate = tf.sigmoid(gate)
         x = tf.multiply(out, gate)
         return x
@@ -19,13 +22,13 @@ def encoder_layer(x, n_filters):
     x = tf.keras.layers.Conv1D(filters=n_filters, kernel_size=8, strides=4, padding='same')(x)
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.Conv1D(filters=2 * n_filters, kernel_size=1, strides=1, padding='same')(x)
-    x = GLU()(x)
+    x = GLU(n_units=n_filters)(x)
     return x
 
 
 def decoder_layer(x, n_filters, strides=4):
     x = tf.keras.layers.Conv1D(filters=2 * n_filters, kernel_size=3, strides=1, padding='same')(x)
-    x = GLU()(x)
+    x = GLU(n_units=n_filters)(x)
     x = tf.keras.layers.Conv1DTranspose(filters=n_filters, kernel_size=8, strides=strides, padding='same')(x)
     x = tf.keras.layers.ReLU()(x)
     return x
@@ -67,3 +70,6 @@ def demucs():
     x = tf.keras.layers.Conv1D(filters=1, kernel_size=1, padding='same', activation='tanh')(x)
 
     return tf.keras.models.Model(inputs=i, outputs=x)
+
+d = demucs()
+d.summary()
