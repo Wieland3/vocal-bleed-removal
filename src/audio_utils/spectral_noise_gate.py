@@ -25,11 +25,10 @@ class SpectralNoiseGate(NoiseGate):
     def process_percentile(self, audio):
         stft = librosa.stft(audio)
         mag = np.abs(stft)
-        lower = np.percentile(mag, 100-self.percentile)
         upper = np.percentile(mag, self.percentile)
         stft_filtered = np.where((mag > upper), mag, 0)
         stft_filtered = stft_filtered * np.exp(1j * np.angle(stft))
-        return librosa.istft(stft_filtered)
+        return librosa.istft(stft_filtered, length=len(audio))
 
     def process_threshold(self, audio):
         stft = librosa.stft(audio)

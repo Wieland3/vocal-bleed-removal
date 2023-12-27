@@ -6,7 +6,8 @@ class NoiseGateFactory:
     @staticmethod
     def create_noise_gate(noise_gate_type, **kwargs):
         if noise_gate_type == "time":
-            return TimeNoiseGate(**kwargs)
+            threshold = kwargs.get('threshold')
+            return TimeNoiseGate(threshold)
         elif noise_gate_type == "spectral":
             strategy = kwargs.get('strategy')
             value = kwargs.get('value')

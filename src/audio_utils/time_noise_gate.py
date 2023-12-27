@@ -7,5 +7,6 @@ class TimeNoiseGate(NoiseGate):
         super().__init__(threshold)
 
     def process(self, audio):
-        return np.where((audio > self.threshold), audio, 0)
+        threshold = 10 ** (self.threshold / 20.0)
+        return np.where((np.abs(audio) > threshold), audio, 0)
 
