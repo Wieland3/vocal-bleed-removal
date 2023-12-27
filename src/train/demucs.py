@@ -22,6 +22,7 @@ def encoder_layer(x, n_filters):
     x = GLU()(x)
     return x
 
+
 def decoder_layer(x, n_filters, strides=4):
     x = tf.keras.layers.Conv1D(filters=2 * n_filters, kernel_size=3, strides=1, padding='same')(x)
     x = GLU()(x)
@@ -58,7 +59,14 @@ def demucs():
     x = decoder_layer(x, 32, strides=2)
     en1_slice = tf.keras.layers.Lambda(lambda x: x[:,9215:-9214])(en1)
     x = tf.keras.layers.Concatenate()([en1_slice, x])
-    x = tf.keras.layers.Conv1D(filters=1, kernel_size=1, padding='same', activation='tanh')(x)
     x = tf.keras.layers.Lambda(lambda x: x[:,1022:-1021])(x)
+    start = (constants.N_SAMPLES_IN - constants.N_SAMPLES_OUT) // 2
+    end = start + constants.N_SAMPLES_OUT
+    i_slice = tf.keras.layers.Lambda(lambda x: x[:, start:end])(i)
+    x = tf.keras.layers.Concatenate()([i_slice, x])
+    x = tf.keras.layers.Conv1D(filters=1, kernel_size=1, padding='same', activation='tanh')(x)
 
     return tf.keras.models.Model(inputs=i, outputs=x)
+
+d = demucs()
+d.summary()
