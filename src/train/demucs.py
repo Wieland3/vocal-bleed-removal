@@ -43,7 +43,7 @@ def demucs():
     en6 = encoder_layer(en5, 512)
 
     x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(512))(en6)
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(512))(en6)
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(512))(x)
     x = tf.keras.layers.Dense(72, activation=None)(x)
     x = tf.keras.layers.Reshape((36, 2))(x)
 
