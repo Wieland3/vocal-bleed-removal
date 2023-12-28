@@ -18,7 +18,7 @@ def load_model(exploited):
     :return: keras Model
     """
     if not exploited:
-        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/demucs_full_train/cp.ckpt"
     else:
         checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
     return tf.keras.models.load_model(checkpoint_path)
@@ -41,7 +41,7 @@ def predict_song(X, exploited):
 
     for i, (X_chunk, _) in enumerate(dataset.song_data_generator(X, X)):
         X_chunk_batch = np.expand_dims(X_chunk, axis=0)
-        y_pred_chunk = model.predict(X_chunk_batch)['vocals'].squeeze(0)
+        y_pred_chunk = model.predict(X_chunk_batch)#['vocals'].squeeze(0)
         pred.append(y_pred_chunk)
 
     pred = np.concatenate(pred, axis=0)
@@ -103,16 +103,12 @@ if __name__ == "__main__":
     print(prediction.shape)
     prediction = prediction.squeeze(axis=-1)
 
-    noise_gate = NoiseGateFactory().create_noise_gate("spectral", strategy="percentile", value=95)
-    prediction = noise_gate.process(prediction)
-    print(type(prediction))
-    print(prediction)
-    print(prediction.shape)
-    prediction = np.expand_dims(prediction, axis=-1)
-    print(prediction.shape)
+    #noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-30)
+    #prediction = noise_gate.process(prediction)
+    #prediction = np.expand_dims(prediction, axis=-1)
 
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/pred_full_train_art_exploited_spectral_noise_95.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/demucs_full_train.wav")
     audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
