@@ -67,6 +67,3 @@ def demucs():
     x = tf.keras.layers.Conv1D(filters=1, kernel_size=1, padding='same', activation='tanh')(x)
 
     return tf.keras.models.Model(inputs=i, outputs=x)
-
-d = demucs()
-d.summary()
