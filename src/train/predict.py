@@ -9,6 +9,7 @@ from src.audio_utils.noise_gate_factory import NoiseGateFactory
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
+from src.train import demucs
 
 
 def load_model(exploited):
@@ -41,7 +42,7 @@ def predict_song(X, exploited):
 
     for i, (X_chunk, _) in enumerate(dataset.song_data_generator(X, X)):
         X_chunk_batch = np.expand_dims(X_chunk, axis=0)
-        y_pred_chunk = model.predict(X_chunk_batch)#['vocals'].squeeze(0)
+        y_pred_chunk = model.predict(X_chunk_batch)#['vocals']
         y_pred_chunk = y_pred_chunk.squeeze(0)
         pred.append(y_pred_chunk)
 
@@ -72,7 +73,7 @@ def get_ground_truth(y):
 
 if __name__ == "__main__":
 
-    exploited = True
+    exploited = False
 
     """
     song_index = 2
@@ -109,7 +110,7 @@ if __name__ == "__main__":
     #prediction = np.expand_dims(prediction, axis=-1)
 
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/demucs_full_train.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/demucs.wav")
     audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
