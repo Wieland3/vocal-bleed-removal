@@ -7,6 +7,7 @@ from src.evaluation.metric import l1_loss_db, sdr
 from src.audio_utils import audio_utils
 from src.audio_utils.noise_gate_factory import NoiseGateFactory
 from src import constants
+from src.train import demucs
 import soundfile as sf
 
 
@@ -41,8 +42,8 @@ class Eval:
                 mix = mix[:,0]
             vocals = predict.get_ground_truth(vocals[:,0])
             prediction = predict.predict_song(mix, exploited=exploited)[:,0]
-            noise_gate = NoiseGateFactory().create_noise_gate("spectral", strategy="percentile", value=90)
-            prediction = noise_gate.process(prediction)
+            #noise_gate = NoiseGateFactory().create_noise_gate("spectral", strategy="percentile", value=90)
+            #prediction = noise_gate.process(prediction)
             sdrs.append(sdr(vocals, prediction))
             l1.append(l1_loss_db(vocals, prediction))
             print(sdrs)
@@ -75,7 +76,7 @@ class Eval:
 
 
 e = Eval()
-res = e.evaluate_from_file()
+res = e.evaluate_model(False)
 print(res)
 
 
