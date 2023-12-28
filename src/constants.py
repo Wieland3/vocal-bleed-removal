@@ -7,7 +7,7 @@ COLAB = True
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRACKS_DIR = os.path.join(ROOT_DIR, "tracks")
 DEBUGGING_DATA_DIR = os.path.join(TRACKS_DIR, "debugging")
-WAVE_UNET = os.path.join(ROOT_DIR, "wave-unet")
+WAVE_UNET = os.path.join(ROOT_DIR, "wave_u_net_tf2")
 EDA_DATA_DIR = os.path.join(TRACKS_DIR, "eda")
 
 if not COLAB:

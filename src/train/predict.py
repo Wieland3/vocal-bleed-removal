@@ -42,6 +42,7 @@ def predict_song(X, exploited):
     for i, (X_chunk, _) in enumerate(dataset.song_data_generator(X, X)):
         X_chunk_batch = np.expand_dims(X_chunk, axis=0)
         y_pred_chunk = model.predict(X_chunk_batch)#['vocals'].squeeze(0)
+        y_pred_chunk = y_pred_chunk.squeeze(0)
         pred.append(y_pred_chunk)
 
     pred = np.concatenate(pred, axis=0)

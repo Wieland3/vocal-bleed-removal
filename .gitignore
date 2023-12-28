@@ -161,3 +161,4 @@ cython_debug/
 
 # Folders
 wave-unet/
+wave_u_net_tf2/
