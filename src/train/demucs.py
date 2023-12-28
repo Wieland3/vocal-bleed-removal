@@ -43,9 +43,8 @@ def demucs():
     en6 = encoder_layer(en5, 512)
 
     x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(512))(en6)
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(512))(x)
-    x = tf.keras.layers.Dense(72, activation=None)(x)
-    x = tf.keras.layers.Reshape((36, 2))(x)
+    x = tf.keras.layers.Dense(576, activation=None)(x)
+    x = tf.keras.layers.Reshape((36, 16))(x)
 
     x = tf.keras.layers.Concatenate()([en6, x])
     x = decoder_layer(x, 512)
@@ -68,3 +67,6 @@ def demucs():
     x = tf.keras.layers.Conv1D(filters=1, kernel_size=1, padding='same', activation='tanh')(x)
 
     return tf.keras.models.Model(inputs=i, outputs=x)
+
+d = demucs()
+d.summary()
