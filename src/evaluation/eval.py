@@ -22,10 +22,9 @@ class Eval:
         for i, _ in enumerate(self.handler.data):
             pred, _ = sf.read(f"{constants.TRACKS_DIR}/eda/moises_test/left_{i}.mp3")
             pred = audio_utils.stereo_to_mono(pred).squeeze(1)
-            vocals, _ = sf.read(f"{constants.TRACKS_DIR}/eda/art_test/left_{i}.wav")
+            vocals, _ = sf.read(f"{constants.TRACKS_DIR}/eda/art_test/voc_{i}.wav")
+            vocals = audio_utils.stereo_to_mono(vocals).squeeze(1)
             vocals = vocals[:pred.shape[0]]
-            vocals = librosa.util.normalize(vocals)
-            pred = librosa.util.normalize(pred)
             sdrs.append(sdr(vocals, pred))
             l1.append(l1_loss_db(vocals, pred))
             print(sdrs)
@@ -76,7 +75,7 @@ class Eval:
 
 
 e = Eval()
-res = e.evaluate_model(False)
+res = e.evaluate_from_file()
 print(res)
 
 
