@@ -37,8 +37,8 @@ class DataSet:
 
     def get_tf_dataset(self):
         output_signature = (
-            tf.TensorSpec(shape=(constants.N_SAMPLES_IN, 1), dtype=tf.float16),
-            tf.TensorSpec(shape=(constants.N_SAMPLES_OUT, 1), dtype=tf.float16)
+            tf.TensorSpec(shape=(constants.N_SAMPLES_IN, 2), dtype=tf.float16),
+            tf.TensorSpec(shape=(constants.N_SAMPLES_OUT, 2), dtype=tf.float16)
         )
 
         return tf.data.Dataset.from_generator(
