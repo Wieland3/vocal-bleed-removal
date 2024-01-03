@@ -5,7 +5,7 @@ from src.dataset.dataset import DataSet
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net_tf2.wave_u_net import wave_u_net
-from src.train import demucs
+from src.evaluation.metric import sdr_tf
 
 params = {
   "num_initial_filters": 12,
@@ -13,7 +13,7 @@ params = {
   "kernel_size": 15,
   "merge_filter_size": 5,
   "source_names": ["vocals"],
-  "num_channels": 1,
+  "num_channels": 2,
   "output_filter_size": 1,
   "padding": "valid",
   "input_size": 147443,
@@ -25,7 +25,7 @@ params = {
 
 if __name__ == "__main__":
 
-    USE_ARTIFICIAL = False
+    USE_ARTIFICIAL = True
 
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/unexploited_difference_layer/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/exploited_altered_arch/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     model.summary()
 
     # Compile and Train
-    model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
+    model.compile(optimizer=optimizer, loss='mse', metrics=['mae', sdr_tf])
     model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2124)
 
 
