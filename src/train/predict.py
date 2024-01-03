@@ -6,6 +6,7 @@ from src.dataset import dataset
 from src.audio_utils import audio_utils
 import sys
 from src.audio_utils.noise_gate_factory import NoiseGateFactory
+import librosa
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
@@ -19,7 +20,7 @@ def load_model(exploited):
     :return: keras Model
     """
     if not exploited:
-        checkpoint_path = constants.CHECKPOINTS_DIR + "/demucs_full_train/cp.ckpt"
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
     else:
         checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
     return tf.keras.models.load_model(checkpoint_path)
@@ -42,7 +43,7 @@ def predict_song(X, exploited):
 
     for i, (X_chunk, _) in enumerate(dataset.song_data_generator(X, X)):
         X_chunk_batch = np.expand_dims(X_chunk, axis=0)
-        y_pred_chunk = model.predict(X_chunk_batch)#['vocals']
+        y_pred_chunk = model.predict(X_chunk_batch)['vocals']
         y_pred_chunk = y_pred_chunk.squeeze(0)
         pred.append(y_pred_chunk)
 
@@ -86,8 +87,10 @@ if __name__ == "__main__":
     guitar, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Guitar.wav")
     guitar = np.expand_dims(guitar, axis=-1)
     vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
+    vocals = librosa.util.normalize(vocals)
 
     clean_sources = np.add(piano * 0.5, guitar * 0.5)
+    clean_sources = librosa.util.normalize(clean_sources)
     print("CLEAN SOURCES BEFORE", clean_sources.shape)
     print("CLEAN SOURCES AFTER", clean_sources.shape)
     vocals = np.expand_dims(vocals, axis=-1)
@@ -110,7 +113,7 @@ if __name__ == "__main__":
     #prediction = np.expand_dims(prediction, axis=-1)
 
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/demucs.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/full_train.wav")
     audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
