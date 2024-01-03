@@ -8,12 +8,12 @@ from wave_u_net_tf2.wave_u_net import wave_u_net
 from src.evaluation.metric import sdr_tf
 
 params = {
-  "num_initial_filters": 12,
+  "num_initial_filters": 8,
   "num_layers": 12,
   "kernel_size": 15,
   "merge_filter_size": 5,
   "source_names": ["vocals"],
-  "num_channels": 2,
+  "num_channels": 1,
   "output_filter_size": 1,
   "padding": "valid",
   "input_size": 147443,
@@ -25,7 +25,7 @@ params = {
 
 if __name__ == "__main__":
 
-    USE_ARTIFICIAL = True
+    USE_ARTIFICIAL = False
 
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
