@@ -32,3 +32,15 @@ def sdr(y_true, y_pred):
     denominator += delta
     return 10 * np.log10(numerator / denominator)
 
+
+def sdr_tf(y_true, y_pred):
+    delta = 1e-7
+
+    numerator = tf.math.reduce_sum(tf.math.square(y_true))
+    denominator = tf.math.reduce_sum(tf.math.square(y_true - y_pred))
+
+    numerator += delta
+    denominator += delta
+
+    return 10 * tf.experimental.numpy.log10(tf.math.divide(numerator, denominator))
+
