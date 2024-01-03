@@ -108,13 +108,9 @@ class MusDataHandler:
         :param index: Index of the song.
         :return: True or False if Song should be skipped.
         """
-        if self.art:
-            if self.subsets == "train":
-                if index not in constants.TRAIN_FEMALE_VOCS:
-                    return True
-            elif self.subsets == "test":
-                if index not in constants.VALID_FEMALE_VOCS:
-                    return True
+        if self.art and self.subsets == "test":
+            if index not in constants.VALID_FEMALE_VOCS:
+                return True
         return False
 
     def data_generator(self, infinite=True):
