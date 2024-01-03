@@ -75,7 +75,7 @@ class Eval:
 
 
 e = Eval()
-res = e.evaluate_from_file()
+res = e.evaluate_model(True)
 print(res)
 
 
