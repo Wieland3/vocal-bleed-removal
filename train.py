@@ -38,7 +38,7 @@ if __name__ == "__main__":
     tf_dataset_test = tf_dataset_test.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Tensorflow checkpoints
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/exploited_altered_arch/cp.ckpt",
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=constants.CHECKPOINTS_DIR + "/wave_demucs/cp.ckpt",
                               save_best_only=True,
                               monitor='val_loss',
                               mode='min',
