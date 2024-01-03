@@ -11,6 +11,7 @@ import librosa
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
 from src.train import demucs
+from src.evaluation.metric import sdr_tf
 
 
 def load_model(exploited):
@@ -23,7 +24,7 @@ def load_model(exploited):
         checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
     else:
         checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
-    return tf.keras.models.load_model(checkpoint_path)
+    return tf.keras.models.load_model(checkpoint_path, custom_objects={"sdr_tf": sdr_tf})
 
 
 def predict_song(X, exploited):
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     #prediction = np.expand_dims(prediction, axis=-1)
 
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/full_train.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/exploited_altered_arch.wav")
     audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
