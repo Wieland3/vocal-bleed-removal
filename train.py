@@ -4,16 +4,16 @@ from src import constants
 from src.dataset.dataset import DataSet
 
 sys.path.insert(0, constants.WAVE_UNET)
-from wave_u_net_tf2.wave_u_net import wave_u_net
+from github_wave_u_net.wave_u_net import wave_u_net
 from src.evaluation.metric import sdr_tf
 
 params = {
-  "num_initial_filters": 8,
+  "num_initial_filters": 12,
   "num_layers": 12,
   "kernel_size": 15,
   "merge_filter_size": 5,
   "source_names": ["vocals"],
-  "num_channels": 1,
+  "num_channels": 2,
   "output_filter_size": 1,
   "padding": "valid",
   "input_size": 147443,
@@ -25,7 +25,7 @@ params = {
 
 if __name__ == "__main__":
 
-    USE_ARTIFICIAL = False
+    USE_ARTIFICIAL = True
 
     # Load training data
     train = DataSet(subsets="train", use_artificial=USE_ARTIFICIAL)
@@ -56,6 +56,6 @@ if __name__ == "__main__":
 
     # Compile and Train
     model.compile(optimizer=optimizer, loss='mse', metrics=['mae', sdr_tf])
-    model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2124)
+    #model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2124)
 
 
