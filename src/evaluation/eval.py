@@ -39,10 +39,11 @@ class Eval:
         for i, (mix, vocals) in enumerate(self.handler.data):
             if not exploited:
                 mix = mix[:,0]
-            vocals = predict.get_ground_truth(vocals[:,0])
-            prediction = predict.predict_song(mix, exploited=exploited)[:,0]
-            #noise_gate = NoiseGateFactory().create_noise_gate("spectral", strategy="percentile", value=90)
-            #prediction = noise_gate.process(prediction)
+            #vocals = predict.get_ground_truth(vocals[:,0])
+            vocals = vocals[:,0]
+            #prediction = predict.predict_song(mix, exploited=exploited)[:,0]
+            noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-40)
+            prediction = noise_gate.process(mix[:,0])
             sdrs.append(sdr(vocals, prediction))
             l1.append(l1_loss_db(vocals, prediction))
             print(sdrs)
