@@ -1,9 +1,9 @@
-from src.audio_utils.noise_gate import NoiseGate
+from src.audio_utils.noise_gate import NoiseGateParent
 import numpy as np
 import librosa
 
 
-class SpectralNoiseGate(NoiseGate):
+class SpectralNoiseGate(NoiseGateParent):
     def __init__(self, threshold, percentile):
         super().__init__(threshold)
         self.percentile = percentile
