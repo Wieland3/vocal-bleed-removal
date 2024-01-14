@@ -21,7 +21,7 @@ def load_model(exploited):
     :return: keras Model
     """
     if not exploited:
-        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt"
     else:
         checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
     return tf.keras.models.load_model(checkpoint_path, custom_objects={"sdr_tf": sdr_tf})
@@ -88,10 +88,10 @@ if __name__ == "__main__":
     guitar, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Guitar.wav")
     guitar = np.expand_dims(guitar, axis=-1)
     vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
-    vocals = librosa.util.normalize(vocals)
+    #vocals = librosa.util.normalize(vocals)
 
     clean_sources = np.add(piano * 0.5, guitar * 0.5)
-    clean_sources = librosa.util.normalize(clean_sources)
+    #clean_sources = librosa.util.normalize(clean_sources)
     print("CLEAN SOURCES BEFORE", clean_sources.shape)
     print("CLEAN SOURCES AFTER", clean_sources.shape)
     vocals = np.expand_dims(vocals, axis=-1)
@@ -101,20 +101,22 @@ if __name__ == "__main__":
     if not exploited:
         X = vocals
     else:
+
         X = np.hstack([vocals, clean_sources])
 
     prediction = predict_song(X, exploited)
     gt = get_ground_truth(vocals)
-    print(vocals.shape)
-    print(prediction.shape)
+    #print(vocals.shape)
+    #print(prediction.shape)
     prediction = prediction.squeeze(axis=-1)
 
-    #noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-30)
-    #prediction = noise_gate.process(prediction)
-    #prediction = np.expand_dims(prediction, axis=-1)
+    #gt = gt.squeeze(1)
+    noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-40)
+    prediction = noise_gate.process(prediction)
+    prediction = np.expand_dims(prediction, axis=-1)
 
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/exploited_altered_arch.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/norm_NOT_exploited_gate40_400.wav")
     audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
