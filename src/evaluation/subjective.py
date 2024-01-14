@@ -15,5 +15,14 @@ exploited_gate_bleed = [70,50,60,55,55,30,70,85, 60, 50, 60, 70]
 hidden_reference_quality = [100, 100, 100, 100, 100, 100, 95, 95, 95]
 hidden_reference_bleed = [0, 0, 0, 0, 0, 0, 0, 0, 10, 5, 10, 5]
 
+# Gates
+
+gate_30_400_quality = [15,45,60]
+gate_30_400_bleed = [30,60,70,100]
+gate_40_400_quality = [20,70,80]
+gate_40_400_bleed = [30, 65, 50, 100]
+exploited_gate_40_400_quality = [25, 65, 80]
+exploited_gate_40_400_bleed = [50, 75, 55, 100]
+
 print(np.average(exploited_gate_quality))
 print(np.average(exploited_gate_bleed))
