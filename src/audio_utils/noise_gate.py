@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class NoiseGate:
+class NoiseGateParent:
     def __init__(self, threshold):
         self.threshold = threshold
 
