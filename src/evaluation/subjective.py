@@ -17,12 +17,12 @@ hidden_reference_bleed = [0, 0, 0, 0, 0, 0, 0, 0, 10, 5, 10, 5]
 
 # Gates
 
-gate_30_400_quality = [15,45,60]
-gate_30_400_bleed = [30,60,70,100]
-gate_40_400_quality = [20,70,80]
-gate_40_400_bleed = [30, 65, 50, 100]
-exploited_gate_40_400_quality = [25, 65, 80]
-exploited_gate_40_400_bleed = [50, 75, 55, 100]
+gate_30_400_quality = [15,45,60, 15, 20, 80, 30, 45, 40]
+gate_30_400_bleed = [30,60,70,100, 10, 30, 60, 100, 60, 65, 65, 100]
+gate_40_400_quality = [20,70,80, 50, 60, 75, 50, 40, 40]
+gate_40_400_bleed = [30, 65, 50, 100, 70, 60, 50, 95, 45, 70, 60, 75]
+exploited_gate_40_400_quality = [25, 65, 80, 35, 80, 75, 50, 60, 85]
+exploited_gate_40_400_bleed = [50, 75, 55, 100, 80, 70, 80, 100, 75, 60, 75, 100]
 
-print(np.average(exploited_gate_quality))
-print(np.average(exploited_gate_bleed))
+print(np.average(exploited_gate_40_400_quality))
+print(np.average(exploited_gate_40_400_bleed))
