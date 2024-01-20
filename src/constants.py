@@ -1,7 +1,7 @@
 import os
 
 # If used from colab set to true
-COLAB = True
+COLAB = False
 
 # Folders
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
