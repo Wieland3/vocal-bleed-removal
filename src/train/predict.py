@@ -111,12 +111,12 @@ if __name__ == "__main__":
     prediction = prediction.squeeze(axis=-1)
 
     #gt = gt.squeeze(1)
-    noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-40)
-    prediction = noise_gate.process(prediction)
-    prediction = np.expand_dims(prediction, axis=-1)
+    #noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-50)
+    #prediction = noise_gate.process(prediction)
+    #prediction = np.expand_dims(prediction, axis=-1)
 
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
-    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/norm_NOT_exploited_gate40_400.wav")
+    audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/full_train_artificial_unexploited.wav")
     audio_utils.save_array_as_wave(gt, constants.DEBUGGING_DATA_DIR + "/GT.wav")
 
 
