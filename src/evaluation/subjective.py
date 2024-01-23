@@ -1,5 +1,5 @@
-import numpy as np
 from scipy import stats
+from src.evaluation import eval
 
 # Objective
 exploited_sdr = [19.597110164291337, 12.498122028745831, 15.187255038925692, 16.73324828941119, 14.890488828281676, 17.95433691990165, 10.433497686008582, 16.736643232670502, 15.69696662576665, 14.48198525709895, 12.992140159230344, 16.339738135607014]
@@ -53,8 +53,20 @@ gate_40_400_bleed = [30, 65, 50, 100, 70, 60, 50, 95, 45, 70, 60, 75]
 exploited_gate_40_400_quality = [25, 65, 80, 35, 80, 75, 50, 60, 85]
 exploited_gate_40_400_bleed = [50, 75, 55, 100, 80, 70, 80, 100, 75, 60, 75, 100]
 
-print(np.average(zero_right_sdr))
-print(np.average(zero_right_l1))
-print(np.std(zero_right_sdr))
-print(np.std(zero_right_l1))
-print(stats.ttest_rel(gate_30_400_quality, gate_40_400_quality))
+
+
+
+data_arrays = [gate_30_400_bleed, gate_40_400_bleed, musdb_bleed, unexploited_bleed, exploited_bleed,
+               exploited_gate_bleed, moises_bleed, hidden_reference_bleed]
+method_names = ['gate_30', 'gate_40', 'musdb', 'unexploited', 'exploited', "exploited_plus_gate", "moises",
+                "hidden ref."]
+
+e = eval.Eval()
+e.plot_p_value_matrix(data_arrays, method_names)
+
+print(stats.ttest_rel(moises_quality, unexploited_quality))
+
+#print(np.average(hidden_reference_bleed))
+#print(np.std(hidden_reference_bleed))
+#print(np.std(zero_right_sdr))
+#print(np.std(zero_right_l1))
