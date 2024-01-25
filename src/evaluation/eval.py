@@ -1,13 +1,7 @@
-import librosa.util
-import numpy as np
 from matplotlib.colors import BoundaryNorm, ListedColormap
-
 from src.train import predict
 from src.dataset.dataset import MusDataHandler
 from src.evaluation.metric import l1_loss_db, sdr
-from src.audio_utils import audio_utils
-from src import constants
-import soundfile as sf
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -26,8 +20,6 @@ class Eval:
         for i, (mix, vocals) in enumerate(self.handler.data):
             vocals = predict.get_ground_truth(vocals[:,0])
             prediction = predict.predict_song(mix, exploited=self.exploited)[:,0]
-            #noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-40)
-            #prediction = noise_gate.process(mix)
             sdrs.append(sdr(vocals, prediction))
             l1.append(l1_loss_db(vocals, prediction))
             print(sdrs)

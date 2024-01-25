@@ -5,12 +5,10 @@ import soundfile as sf
 from src.dataset import dataset
 from src.audio_utils import audio_utils
 import sys
-from src.audio_utils.noise_gate_factory import NoiseGateFactory
 import librosa
 
 sys.path.insert(0, constants.WAVE_UNET)
 from wave_u_net import wave_u_net
-from src.train import demucs
 from src.evaluation.metric import sdr_tf
 
 
@@ -21,7 +19,7 @@ def load_model(exploited):
     :return: keras Model
     """
     if not exploited:
-        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt"
+        checkpoint_path = constants.CHECKPOINTS_DIR + "/full_train/cp.ckpt"
     else:
         checkpoint_path = constants.CHECKPOINTS_DIR + "/exploit_full_train/cp.ckpt"
     return tf.keras.models.load_model(checkpoint_path, custom_objects={"sdr_tf": sdr_tf})
@@ -106,14 +104,7 @@ if __name__ == "__main__":
 
     prediction = predict_song(X, exploited)
     gt = get_ground_truth(vocals)
-    #print(vocals.shape)
-    #print(prediction.shape)
     prediction = prediction.squeeze(axis=-1)
-
-    #gt = gt.squeeze(1)
-    #noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-50)
-    #prediction = noise_gate.process(prediction)
-    #prediction = np.expand_dims(prediction, axis=-1)
 
     audio_utils.save_array_as_wave(clean_sources, constants.DEBUGGING_DATA_DIR + "/clean_sources.wav")
     audio_utils.save_array_as_wave(prediction, constants.DEBUGGING_DATA_DIR + "/full_train_artificial_unexploited.wav")
