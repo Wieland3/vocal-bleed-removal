@@ -15,7 +15,7 @@ from random import randrange, uniform, random
 
 
 class MusDataHandler:
-    def __init__(self, root=constants.MUSDB_DIR, subsets='train', use_artificial=False, infinite=True):
+    def __init__(self, root=constants.MUSDB_DIR, subsets='train', use_artificial=False, exploited=False, infinite=True):
         """
         Initializes the MusDataHandler Class.
         If a saved npz file exists, it uses it to load the data.
@@ -24,6 +24,7 @@ class MusDataHandler:
         """
         # Field if artificial dataset is used or not.
         self.art = use_artificial
+        self.exploited = exploited
         self.subsets = subsets
         self.mus = musdb.DB(root=root, subsets=subsets)
         self.data = self.data_generator(infinite=infinite)
@@ -60,24 +61,7 @@ class MusDataHandler:
         :return: edited song if self.art is set to True else it returns the song unedited.
         """
         if not self.art:
-            other_mono = stereo_to_mono(track.targets['other'].audio)
-            vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
-
-            rir = self.get_rir()
-            convolved = convolve(other_mono, rir, mode='same')
-
-            if self.subsets == "train":
-                loudness = randrange(-40, -30, 1)
-            else:
-                loudness = -35
-
-            loudness_normalized_other = normalize_target_loudness(convolved, loudness)
-            loudness_normalized_other = np.clip(loudness_normalized_other, -1, 1)
-
-            mix = loudness_normalized_other + vocals_mono
-            mix = np.clip(mix, -1, 1)
-
-            return mix, vocals_mono
+            return track.audio, track.targets['vocals'].audio
         else:
             other_mono = stereo_to_mono(track.targets['other'].audio)
             vocals_mono = stereo_to_mono(track.targets['vocals'].audio)
@@ -96,10 +80,12 @@ class MusDataHandler:
             mix = loudness_normalized_other + vocals_mono
             mix = np.clip(mix, -1, 1)
 
-            stereo_vocals = np.concatenate([vocals_mono, vocals_mono], axis=1)
+            if self.exploited:
+                stereo_vocals = np.concatenate([vocals_mono, vocals_mono], axis=1)
+                stacked_array = np.hstack([mix, other_mono])
+                return stacked_array, stereo_vocals
 
-            stacked_array = np.hstack([mix, other_mono])
-            return stacked_array, stereo_vocals
+            return mix, vocals_mono
 
     def should_skip(self, index):
         """
