@@ -15,37 +15,17 @@ from scipy.stats import ttest_rel
 
 
 class Eval:
-    def __init__(self):
-        self.handler = MusDataHandler(subsets="test", use_artificial=True, infinite=False)
+    def __init__(self, exploited=False):
+        self.exploited = exploited
+        self.handler = MusDataHandler(subsets="test", use_artificial=True, infinite=False, exploited=self.exploited)
 
-    def evaluate_from_file(self):
-        sdrs = []
-        l1 = []
-
-        for i, _ in enumerate(self.handler.data):
-            pred, _ = sf.read(f"{constants.TRACKS_DIR}/eda/moises_test/left_{i}.mp3")
-            pred = audio_utils.stereo_to_mono(pred).squeeze(1)
-            vocals, _ = sf.read(f"{constants.TRACKS_DIR}/eda/art_test/voc_{i}.wav")
-            vocals = audio_utils.stereo_to_mono(vocals).squeeze(1)
-            vocals = vocals[:pred.shape[0]]
-            sdrs.append(sdr(vocals, pred))
-            l1.append(l1_loss_db(vocals, pred))
-            print(sdrs)
-            print(l1)
-
-        return np.average(sdrs), np.average(l1)
-
-    def evaluate_model(self, exploited):
+    def evaluate_model(self):
         sdrs = []
         l1 = []
 
         for i, (mix, vocals) in enumerate(self.handler.data):
-            if not exploited:
-                mix = mix[:,0]
             vocals = predict.get_ground_truth(vocals[:,0])
-            #vocals = vocals[:,0]
-            mix = self.silence_clean_sources(mix)
-            prediction = predict.predict_song(mix, exploited=exploited)[:,0]
+            prediction = predict.predict_song(mix, exploited=self.exploited)[:,0]
             #noise_gate = NoiseGateFactory().create_noise_gate("time", threshold=-40)
             #prediction = noise_gate.process(mix)
             sdrs.append(sdr(vocals, prediction))
@@ -76,6 +56,7 @@ class Eval:
     def silence_clean_sources(mix):
         mix[:,1] = np.zeros(mix[:,1].shape)
         return mix
+
     @staticmethod
     def plot_p_value_matrix(data_arrays, method_names):
         num_methods = len(method_names)
@@ -99,12 +80,12 @@ class Eval:
         ax.figure.tight_layout()
         plt.show()
 
-"""
-e = Eval()
-res = e.evaluate_model(True)
+
+e = Eval(True)
+res = e.evaluate_model()
 print("SDR", res[0])
 print("L1", res[1])
-"""
+
 
 
 
