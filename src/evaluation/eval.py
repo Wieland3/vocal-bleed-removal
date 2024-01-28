@@ -50,12 +50,20 @@ class Eval:
         return mix
 
     @staticmethod
-    def plot_p_value_matrix(data_arrays, method_names):
+    def plot_p_value_matrix(data_arrays, method_names, reference=None, reference_name=None):
         num_methods = len(method_names)
-        p_values_matrix = np.zeros((num_methods, num_methods))
+        p_values_matrix = np.zeros((num_methods, num_methods)) if not reference else np.zeros((num_methods, 1))
 
         for i in range(num_methods):
+
+            if reference:
+                _, p_value = ttest_rel(data_arrays[i], reference)
+                p_values_matrix[i] = p_value
+                continue
+
             for j in range(i, num_methods):
+                if reference:
+                    break
                 _, p_value = ttest_rel(data_arrays[i], data_arrays[j])
                 p_values_matrix[i, j] = p_value
                 p_values_matrix[j, i] = p_value
@@ -67,18 +75,18 @@ class Eval:
         bounds = [0, 0.05, 1]
         my_norm = BoundaryNorm(bounds, ncolors=len(my_colors))
 
-        ax = sns.heatmap(p_values_matrix, annot=True, norm=my_norm, cmap=my_cmap, xticklabels=method_names,
+        x_labels = method_names if not reference else reference_name
+        ax = sns.heatmap(p_values_matrix, annot=True, norm=my_norm, cmap=my_cmap, xticklabels=x_labels,
                          yticklabels=method_names, annot_kws={"fontsize": 15}, vmin=0, vmax=1, cbar=False)
         ax.figure.tight_layout()
         plt.show()
 
-
+"""
 e = Eval(True)
 res = e.evaluate_model()
 print("SDR", res[0])
 print("L1", res[1])
-
-
+"""
 
 
 
