@@ -56,13 +56,11 @@ exploited_gate_40_400_bleed = [50, 75, 55, 100, 80, 70, 80, 100, 75, 60, 75, 100
 
 
 
-data_arrays = [gate_30_400_bleed, gate_40_400_bleed, musdb_bleed, unexploited_bleed, exploited_bleed,
-               exploited_gate_bleed, moises_bleed, hidden_reference_bleed]
-method_names = ['gate_30', 'gate_40', 'musdb', 'unexploited', 'exploited', "exploited_plus_gate", "moises",
-                "hidden ref."]
+data_arrays = [noise20_sdr, noise40_sdr, shift25_sdr, shift50_sdr, zero_right_sdr]
+method_names = ['White noise with relative level of 0.2', 'White noise with relative level of 0.4', 'Shift clean sources by 11025 samples (0.25 seconds)', 'Shift clean sources by 22050 samples (0.5 seconds) ', 'Replacing right channel with zeros']
 
 e = eval.Eval()
-e.plot_p_value_matrix(data_arrays, method_names)
+e.plot_p_value_matrix(data_arrays, method_names, reference=exploited_sdr, reference_name=["No corruption"])
 
 print(stats.ttest_rel(moises_quality, unexploited_quality))
 
