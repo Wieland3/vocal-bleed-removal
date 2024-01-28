@@ -29,7 +29,7 @@ class DataSet:
         handler = MusDataHandler(subsets=subsets, use_artificial=use_artificial, exploited=self.exploited)
         self.data = handler.data
 
-    def generate_training_data(self):
+    def data_generator(self):
         for mix, vocals in self.data:
             song = zero_pad(mix.astype(np.float16))
             vocal = zero_pad(vocals.astype(np.float16))
@@ -45,6 +45,6 @@ class DataSet:
         )
 
         return tf.data.Dataset.from_generator(
-            self.generate_training_data,
+            self.data_generator,
             output_signature=output_signature
         ).repeat()
