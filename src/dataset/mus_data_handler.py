@@ -81,7 +81,7 @@ class MusDataHandler:
             mix = np.clip(mix, -1, 1)
 
             if self.exploited:
-                stereo_vocals = np.concatenate([vocals_mono, vocals_mono], axis=1)
+                stereo_vocals = np.concatenate([vocals_mono, vocals_mono], axis=1) # convert back to mono later
                 stacked_array = np.hstack([mix, other_mono])
                 return stacked_array, stereo_vocals
 
