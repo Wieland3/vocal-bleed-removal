@@ -40,7 +40,7 @@ def predict_song(X, exploited):
     if X.ndim == 1:
         X = np.expand_dims(X, axis=-1)
 
-    for i, (X_chunk, _) in enumerate(dataset.song_data_generator(X, X)):
+    for i, (X_chunk, _) in enumerate(dataset.sample_generator(X, X)):
         X_chunk_batch = np.expand_dims(X_chunk, axis=0)
         y_pred_chunk = model.predict(X_chunk_batch)['vocals']
         y_pred_chunk = y_pred_chunk.squeeze(0)
@@ -63,7 +63,7 @@ def get_ground_truth(y):
     gt = []
     y = audio_utils.zero_pad(y)
 
-    for i, (_, y_chunk) in enumerate(dataset.song_data_generator(y, y)):
+    for i, (_, y_chunk) in enumerate(dataset.sample_generator(y, y)):
         gt.append(y_chunk)
 
     gt = np.concatenate(gt, axis=0)

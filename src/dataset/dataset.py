@@ -10,7 +10,7 @@ from src.audio_utils.audio_utils import zero_pad, center_crop
 from src import constants
 
 
-def song_data_generator(mix, vocal):
+def sample_generator(mix, vocal):
     l, r = 0, constants.N_SAMPLES_IN
     step = constants.N_SAMPLES_OUT
 
@@ -34,7 +34,7 @@ class DataSet:
             song = zero_pad(mix.astype(np.float16))
             vocal = zero_pad(vocals.astype(np.float16))
 
-            yield from song_data_generator(song, vocal)
+            yield from sample_generator(song, vocal)
 
     def get_tf_dataset(self):
 
