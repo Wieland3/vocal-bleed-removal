@@ -27,7 +27,7 @@ class MusdbDataHandler:
         self.exploited = exploited
         self.subsets = subsets
         self.mus = musdb.DB(root=root, subsets=subsets)
-        self.data = self.data_generator(infinite=infinite)
+        self.data = self.song_data_generator(infinite=infinite)
 
     def get_rir(self):
         """
@@ -99,7 +99,7 @@ class MusdbDataHandler:
                 return True
         return False
 
-    def data_generator(self, infinite=True):
+    def song_data_generator(self, infinite=True):
         """
         Generates one song of mix, vocals.
         :yields: mix, vocals
