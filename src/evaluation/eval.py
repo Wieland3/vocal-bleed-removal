@@ -1,6 +1,6 @@
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from src.train import predict
-from src.dataset.dataset import MusDataHandler
+from src.dataset.dataset import MusdbDataHandler
 from src.evaluation.metric import l1_loss_db, sdr
 import numpy as np
 import seaborn as sns
@@ -11,7 +11,7 @@ from scipy.stats import ttest_rel
 class Eval:
     def __init__(self, exploited=False):
         self.exploited = exploited
-        self.handler = MusDataHandler(subsets="test", use_artificial=True, infinite=False, exploited=self.exploited)
+        self.handler = MusdbDataHandler(subsets="test", use_artificial=True, infinite=False, exploited=self.exploited)
 
     def evaluate_model(self):
         sdrs = []

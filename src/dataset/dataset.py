@@ -5,17 +5,17 @@ and testing.
 
 import numpy as np
 import tensorflow as tf
-from src.dataset.mus_data_handler import MusDataHandler
+from src.dataset.musdb_data_handler import MusdbDataHandler
 from src.audio_utils.audio_utils import zero_pad, center_crop
 from src import constants
 
 
-def song_data_generator(song, vocal):
+def song_data_generator(mix, vocal):
     l, r = 0, constants.N_SAMPLES_IN
     step = constants.N_SAMPLES_OUT
 
-    while r <= song.shape[0]:
-        X_chunk = np.array(song[l:r])
+    while r <= mix.shape[0]:
+        X_chunk = np.array(mix[l:r])
         y_chunk = center_crop(vocal[l:r])
         yield X_chunk, y_chunk
 
@@ -26,7 +26,7 @@ def song_data_generator(song, vocal):
 class DataSet:
     def __init__(self, subsets="train", use_artificial=False, exploited=False):
         self.exploited=exploited
-        handler = MusDataHandler(subsets=subsets, use_artificial=use_artificial, exploited=self.exploited)
+        handler = MusdbDataHandler(subsets=subsets, use_artificial=use_artificial, exploited=self.exploited)
         self.data = handler.data
 
     def data_generator(self):

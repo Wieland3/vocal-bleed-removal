@@ -14,7 +14,7 @@ from src.audio_utils.audio_utils import stereo_to_mono, normalize_target_loudnes
 from random import randrange, uniform, random
 
 
-class MusDataHandler:
+class MusdbDataHandler:
     def __init__(self, root=constants.MUSDB_DIR, subsets='train', use_artificial=False, exploited=False, infinite=True):
         """
         Initializes the MusDataHandler Class.
