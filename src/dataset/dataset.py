@@ -10,13 +10,13 @@ from src.audio_utils.audio_utils import zero_pad, center_crop
 from src import constants
 
 
-def sample_generator(mix, vocal):
+def sample_generator(mix, vocals):
     l, r = 0, constants.N_SAMPLES_IN
     step = constants.N_SAMPLES_OUT
 
     while r <= mix.shape[0]:
         X_chunk = np.array(mix[l:r])
-        y_chunk = center_crop(vocal[l:r])
+        y_chunk = center_crop(vocals[l:r])
         yield X_chunk, y_chunk
 
         l += step
