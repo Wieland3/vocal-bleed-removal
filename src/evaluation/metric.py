@@ -3,9 +3,9 @@ import tensorflow as tf
 import librosa
 
 
-def l1_loss_db(y_true, y_pred, n_fft=2048):
-    fft_y_true = librosa.stft(y_true, n_fft=n_fft)
-    fft_y_pred = librosa.stft(y_pred, n_fft=n_fft)
+def l1_loss_db(y_true, y_pred):
+    fft_y_true = librosa.stft(y_true, n_fft=2048)
+    fft_y_pred = librosa.stft(y_pred, n_fft=2048)
 
     fft_y_true_db = librosa.amplitude_to_db(np.abs(fft_y_true))
     fft_y_pred_db = librosa.amplitude_to_db(np.abs(fft_y_pred))
