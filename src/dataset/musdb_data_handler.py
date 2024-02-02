@@ -20,7 +20,10 @@ class MusdbDataHandler:
         Initializes the MusDataHandler Class.
         If a saved npz file exists, it uses it to load the data.
         :param root: Path to the musdb dataset
-        :param subsets: "train" / "test" for musdb data, "art_train" / "art_test" for artificial data.
+        :param subsets: "train" / "test"
+        :param use_artificial: if artificial dataset should be created
+        :param exploited: if exploited version of data should be created
+        :param infinite: Boolean if data generator should yield samples infinetely
         """
         # Field if artificial dataset is used or not.
         self.art = use_artificial
@@ -102,6 +105,7 @@ class MusdbDataHandler:
     def song_data_generator(self, infinite=True):
         """
         Generates one song of mix, vocals.
+        :param infinite: If generator should yield infinetely
         :yields: mix, vocals
         """
         while True:
