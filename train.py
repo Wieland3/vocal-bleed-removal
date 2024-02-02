@@ -5,7 +5,6 @@ from src.dataset.dataset import DataSet
 
 sys.path.insert(0, constants.WAVE_UNET)
 from github_wave_u_net.wave_u_net import wave_u_net
-from src.evaluation.metric import sdr_tf
 
 params = {
   "num_initial_filters": 12,
@@ -54,7 +53,7 @@ if __name__ == "__main__":
     model.summary()
 
     # Compile and Train
-    model.compile(optimizer=optimizer, loss='mse', metrics=['mae', sdr_tf])
+    model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
     model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2124)
 
 
