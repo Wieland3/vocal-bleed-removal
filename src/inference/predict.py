@@ -55,8 +55,8 @@ def predict_song(X, exploited):
 def get_ground_truth(y):
     """
     Gets the ground truth for a song.
-    :param y:
-    :return:
+    :param y: vocal for song
+    :return: ground truth
     """
     gt = []
     y = audio_utils.zero_pad(y)
