@@ -18,7 +18,6 @@ class MusdbDataHandler:
     def __init__(self, root=constants.MUSDB_DIR, subsets='train', use_artificial=False, exploited=False, infinite=True):
         """
         Initializes the MusDataHandler Class.
-        If a saved npz file exists, it uses it to load the data.
         :param root: Path to the musdb dataset
         :param subsets: "train" / "test"
         :param use_artificial: if artificial dataset should be created
