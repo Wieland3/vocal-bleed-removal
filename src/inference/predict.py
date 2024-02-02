@@ -75,31 +75,18 @@ if __name__ == "__main__":
 
     exploited = False
 
-    """
-    song_index = 2
-    song = test.songs[song_index]
-    vocals = test.vocals[song_index]
-    """
-
     piano, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Piano.wav")
     piano = audio_utils.stereo_to_mono(piano)
     guitar, _ = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Guitar.wav")
     guitar = np.expand_dims(guitar, axis=-1)
     vocals, sr = sf.read(constants.TRACKS_DIR + "/thomas/night/tracks/Voice.wav")
-    #vocals = librosa.util.normalize(vocals)
 
     clean_sources = np.add(piano * 0.5, guitar * 0.5)
-    #clean_sources = librosa.util.normalize(clean_sources)
-    print("CLEAN SOURCES BEFORE", clean_sources.shape)
-    print("CLEAN SOURCES AFTER", clean_sources.shape)
     vocals = np.expand_dims(vocals, axis=-1)
-    print("VOCS BEFORE", vocals.shape)
-    print("VOCS AFTER", vocals.shape)
 
     if not exploited:
         X = vocals
     else:
-
         X = np.hstack([vocals, clean_sources])
 
     prediction = predict_song(X, exploited)

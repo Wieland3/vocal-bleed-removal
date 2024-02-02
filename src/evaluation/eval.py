@@ -1,5 +1,5 @@
 from matplotlib.colors import BoundaryNorm, ListedColormap
-from src.train import predict
+from src.inference import predict
 from src.dataset.dataset import MusdbDataHandler
 from src.evaluation.metric import l1_loss_db, sdr
 import numpy as np
