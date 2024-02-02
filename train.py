@@ -51,11 +51,10 @@ if __name__ == "__main__":
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
     model = wave_u_net(**params)
-    #model = tf.keras.models.load_model(constants.CHECKPOINTS_DIR + "/full_train_artificial_unexploited/cp.ckpt")
     model.summary()
 
     # Compile and Train
     model.compile(optimizer=optimizer, loss='mse', metrics=['mae', sdr_tf])
-    #model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2124)
+    model.fit(tf_dataset_train, epochs=100, callbacks=callbacks_list, validation_data=tf_dataset_test, steps_per_epoch=3905, validation_steps=2124)
 
 
